@@ -117,7 +117,7 @@ namespace WoodcatCalculator
             return false;
         }
 
-        //remove all coordinate that unnecessary
+        //remove all coordinate that unnecessary for exemple: (0,0)~~(5,0)~~(6,0)~~.., the coordinate (5,0) is unnecessary.
         public void removeUnnecessaryCoordinate()
         {
             int next;
@@ -134,7 +134,7 @@ namespace WoodcatCalculator
             }
         }
 
-        //insert value to "type" enum field.
+        //insert value to enum field "type".
         private void update_type()
         {
 
@@ -160,6 +160,8 @@ namespace WoodcatCalculator
         }
 
         //The function receives an index and checks whether the point is external.
+        //exemple for internal point: (0,0)~~(5,0)~~(5,1)~~(6,1)~~(6,4)~~(0,4)
+        //the point (5,1) is internal, while others are external
         public bool check_if_is_external(int index)
         {
             int previous = index - 1;
