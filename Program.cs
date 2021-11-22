@@ -33,6 +33,7 @@ namespace WoodcatCalculator
 
             Console.WriteLine(C.fun4(new piece(2, 0.5), 0));
 
+            Console.WriteLine();
             Console.WriteLine(C.fun4(new piece(2.5, 1.5), 0));
 
         }
