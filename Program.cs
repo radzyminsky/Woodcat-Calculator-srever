@@ -26,6 +26,7 @@ namespace WoodcatCalculator
                 new Coordinate(6, 7),
                 new Coordinate(0, 7)
             });
+<<<<<<< HEAD
             Console.WriteLine(cOORDINATES);
             Console.WriteLine("remove");
             cOORDINATES.remove(cOORDINATES.find(new Coordinate(6, 5)), cOORDINATES.find(new Coordinate(0, 7)));
@@ -33,6 +34,16 @@ namespace WoodcatCalculator
             List<Coordinate> list = new List<Coordinate>();
             
            
+=======
+            Console.WriteLine(C);
+            Console.WriteLine(C.count());
+
+            Console.WriteLine(C.fun4(new piece(2, 0.5), 0));
+
+            Console.WriteLine();
+            Console.WriteLine(C.fun4(new piece(2.5, 1.5), 0));
+
+>>>>>>> 96b400b (i try commit)
         }
     }
     class Coordinate
