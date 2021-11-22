@@ -1,7 +1,7 @@
 C:\Users\Yonatan\source\repos\WoodcatCalculator\bin\Debug\WoodcatCalculator.exe.config
 C:\Users\Yonatan\source\repos\WoodcatCalculator\bin\Debug\WoodcatCalculator.exe
 C:\Users\Yonatan\source\repos\WoodcatCalculator\bin\Debug\WoodcatCalculator.pdb
-C:\Users\Yonatan\source\repos\WoodcatCalculator\obj\Debug\WoodcatCalculator.csprojAssemblyReference.cache
 C:\Users\Yonatan\source\repos\WoodcatCalculator\obj\Debug\WoodcatCalculator.csproj.CoreCompileInputs.cache
 C:\Users\Yonatan\source\repos\WoodcatCalculator\obj\Debug\WoodcatCalculator.exe
 C:\Users\Yonatan\source\repos\WoodcatCalculator\obj\Debug\WoodcatCalculator.pdb
+C:\Users\Yonatan\source\repos\WoodcatCalculator\obj\Debug\WoodcatCalculator.csproj.AssemblyReference.cache
