@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace WoodcatCalculator
 {
-    enum types { top=1, down=2, right=4, left=8 };
+    enum types { top = 1, down = 2, right = 4, left = 8 };
     class Program
     {
         static void Main(string[] args)
@@ -16,7 +16,6 @@ namespace WoodcatCalculator
             C.insertRange(0, new Coordinate[]{
                 new Coordinate(0, 0),
                 new Coordinate(3, 0),
-
                 new Coordinate(3,4),
                 new Coordinate(0,4)
             });
@@ -29,14 +28,7 @@ namespace WoodcatCalculator
                 new Coordinate(3,3),
             });
 
-            Console.WriteLine(C);
-            Console.WriteLine(C.count());
-
-            Console.WriteLine(C.fun4(new piece(2, 0.5), 0));
-
-            Console.WriteLine();
-            Console.WriteLine(C.fun4(new piece(2.5, 1.5), 0));
-
+       
         }
     }
     class Coordinate
@@ -62,6 +54,36 @@ namespace WoodcatCalculator
             if (c1.x == c2.x && c1.y == c2.y)
                 return true;
             return false;
+        }
+        public static bool operator >(Coordinate c1, Coordinate c2) 
+        {
+            
+            if (c1.x == c2.x || c1.y == c2.y)
+            {
+                if (c1.y < c2.y || c1.x < c2.x)
+                    return true;
+                return false;
+            }
+            throw (new Exception("a and b aren't on the same axis "));
+        }
+        public static bool operator <(Coordinate c1, Coordinate c2) 
+        {
+           
+            if (c1.x == c2.x|| c1.y == c2.y)
+            {
+                if (c1.y < c2.y|| c1.x < c2.x)
+                    return true;
+                return false;
+            }          
+            throw (new Exception("a and b aren't on the same axis "));
+        }
+        public static bool operator <=(Coordinate c1, Coordinate c2)
+        {
+                return (c1 < c2 || c1 == c2);
+        }
+        public static bool operator >=(Coordinate c1, Coordinate c2) 
+        {
+            return (c1 > c2 || c1 == c2);
         }
         public override string ToString()
         {
@@ -199,13 +221,17 @@ namespace WoodcatCalculator
 
             help_fun4_init_values(out x_right, out x_left, out y_top, out y_down, index_of_coord, p);
 
-            Console.WriteLine("check if can insert piece: (" + x_left + "," + x_right + "," + y_top + "," + y_down + ")\nat coordinate: " +coordinates[ index_of_coord]);
+            // Console.WriteLine("check if can insert piece: (" + x_left + "," + x_right + "," + y_top + "," + y_down + ")\nat coordinate: " +coordinates[ index_of_coord]);
+
+            Console.WriteLine("check if can insert piece: {0}{1}{2}{3}\nat coordinate: {4}"
+                , new Coordinate(x_left, y_down), new Coordinate(x_right, y_down), new Coordinate(x_right, y_top),
+                new Coordinate(x_left, y_top), coordinates[index_of_coord]);
 
             int current = index_of_coord + 1;
             int next;
 
-            while (current != index_of_coord )
-            {           
+            while (current != index_of_coord)
+            {
                 if (coordinates[current].type == types.left || coordinates[current].type == types.right)
                 {
                     if (coordinates[current].y < y_top && coordinates[current].y > y_down)
@@ -275,6 +301,19 @@ namespace WoodcatCalculator
         {
             COORDINATES[] coordinatesArray = new COORDINATES[] { };
             return coordinatesArray;
+        }
+
+        bool help_fun6_check_if_is_beetwin(Coordinate small, Coordinate larg, int index)
+        {
+            if (small > larg)
+            {
+                Coordinate temp = small;
+                small = larg;
+                larg = temp;
+            }
+            if (coordinates[index] >= small && coordinates[index] <= larg)
+                return true;
+            return false;
         }
 
         public override string ToString()
