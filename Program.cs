@@ -12,13 +12,15 @@ namespace WoodcatCalculator
         static void Main(string[] args)
         {
 
-            COORDINATES C = new COORDINATES();
-            C.insertRange(0, new Coordinate[]{
+            COORDINATES C = new COORDINATES(
+                new Coordinate[]
+                {
                 new Coordinate(0, 0),
                 new Coordinate(3, 0),
                 new Coordinate(3,4),
                 new Coordinate(0,4)
-            });
+            }
+                );
             Console.WriteLine(C);
             Console.WriteLine("add");
             C.insertRange(2, new Coordinate[]{
@@ -28,7 +30,7 @@ namespace WoodcatCalculator
                 new Coordinate(3,3),
             });
 
-       
+
         }
     }
     class Coordinate
@@ -55,9 +57,9 @@ namespace WoodcatCalculator
                 return true;
             return false;
         }
-        public static bool operator >(Coordinate c1, Coordinate c2) 
+        public static bool operator >(Coordinate c1, Coordinate c2)
         {
-            
+
             if (c1.x == c2.x || c1.y == c2.y)
             {
                 if (c1.y < c2.y || c1.x < c2.x)
@@ -66,22 +68,22 @@ namespace WoodcatCalculator
             }
             throw (new Exception("a and b aren't on the same axis "));
         }
-        public static bool operator <(Coordinate c1, Coordinate c2) 
+        public static bool operator <(Coordinate c1, Coordinate c2)
         {
-           
-            if (c1.x == c2.x|| c1.y == c2.y)
+
+            if (c1.x == c2.x || c1.y == c2.y)
             {
-                if (c1.y < c2.y|| c1.x < c2.x)
+                if (c1.y < c2.y || c1.x < c2.x)
                     return true;
                 return false;
-            }          
+            }
             throw (new Exception("a and b aren't on the same axis "));
         }
         public static bool operator <=(Coordinate c1, Coordinate c2)
         {
-                return (c1 < c2 || c1 == c2);
+            return (c1 < c2 || c1 == c2);
         }
-        public static bool operator >=(Coordinate c1, Coordinate c2) 
+        public static bool operator >=(Coordinate c1, Coordinate c2)
         {
             return (c1 > c2 || c1 == c2);
         }
@@ -98,8 +100,12 @@ namespace WoodcatCalculator
         {
             coordinates = new List<Coordinate>();
         }
+        public COORDINATES(Coordinate[] c) : base()
+        {
+            insertRange(0, c);
+        }
 
-        //insert new coordinate or coordinates, update "type" field, and removing unnecessary cordinate from 
+        //insert new coordinate or coordinates from the specified undex, update "type" field, and removing unnecessary cordinate from 
         //the coordinates array, finaly, checking if is valid or not.
         public void insertRange(int index, Coordinate[] arr)
         {
@@ -267,40 +273,120 @@ namespace WoodcatCalculator
         void help_fun4_init_values(out double x_right, out double x_left, out double y_top, out double y_down, int index_of_coord, piece p)
         {
             Coordinate c = coordinates[index_of_coord];
-            if (c.type == types.top)
+            switch (c.type)
             {
-                x_right = c.x;
-                x_left = c.x - p.Width;
-                y_top = c.y + p.Length;
-                y_down = c.y;
+                case types.top:
+                    x_right = c.x;
+                    x_left = c.x - p.Width;
+                    y_top = c.y + p.Length;
+                    y_down = c.y;
+                    break;
+                case types.down:
+                    x_right = c.x + p.Width;
+                    x_left = c.x;
+                    y_top = c.y;
+                    y_down = c.y - p.Length;
+                    break;
+                case types.right:
+                    x_right = c.x + p.Width;
+                    x_left = c.x;
+                    y_top = c.y + p.Length;
+                    y_down = c.y;
+                    break;
+                case types.left:
+                    x_right = c.x;
+                    x_left = c.x - p.Width;
+                    y_top = c.y;
+                    y_down = c.y - p.Length;
+                    break;
+                default:
+                    throw new Exception();
+                    
             }
-            else if (c.type == types.down)
-            {
-                x_right = c.x + p.Width;
-                x_left = c.x;
-                y_top = c.y;
-                y_down = c.y - p.Length;
-            }
-            else if (c.type == types.right)
-            {
-                x_right = c.x + p.Width;
-                x_left = c.x;
-                y_top = c.y + p.Length;
-                y_down = c.y;
-            }
-            else
-            {
-                x_right = c.x;
-                x_left = c.x - p.Width;
-                y_top = c.y;
-                y_down = c.y - p.Length;
-            }
+          
         }
 
-        public COORDINATES[] fun6()
+        public List<COORDINATES> fun6(piece p, int here_insert)
         {
-            COORDINATES[] coordinatesArray = new COORDINATES[] { };
-            return coordinatesArray;
+            COORDINATES c_temp, c_temp2;
+
+            double x_right, x_left, y_top, y_down;
+            help_fun4_init_values(out x_right, out x_left, out y_top, out y_down, here_insert, p);
+
+            switch (coordinates[here_insert].type)
+            {
+                case types.top:
+                    c_temp = new COORDINATES(new Coordinate[]{
+                        new Coordinate(x_right, y_down),
+                        new Coordinate(x_right,y_top),
+                        new Coordinate(x_left,y_top)
+                    });
+                    break;
+                case types.down:
+                    c_temp = new COORDINATES(new Coordinate[]{
+                        new Coordinate(x_left, y_top),
+                        new Coordinate(x_left,y_down),
+                        new Coordinate(x_left,y_down)
+                    });
+                    break;
+                case types.right:
+                    c_temp = new COORDINATES(new Coordinate[]{
+                        new Coordinate(x_left, y_top),
+                        new Coordinate(x_right,y_top),
+                        new Coordinate(x_right,y_down)
+                    });
+                    break;
+                case types.left:
+                    c_temp = new COORDINATES(new Coordinate[]{
+                        new Coordinate(x_right, y_down),
+                        new Coordinate(x_left,y_down),
+                        new Coordinate(x_left,y_top)
+                    });
+                    break;
+                default:
+                    throw new Exception();
+
+            }
+
+            List<  COORDINATES> AllCoordinates = new List<COORDINATES>();
+            AllCoordinates.Add(c_temp);
+
+            List<Coordinate> thisCoordinates;
+            int next, index_checked=0;
+
+            for (int i = 0; i < AllCoordinates.Count; i++)
+            {
+                thisCoordinates = AllCoordinates[i].coordinates;
+                for (int j = 0; j < thisCoordinates.Count; j++)
+                {
+                    next = j + 1;
+                    if (next == thisCoordinates.Count)
+                        next = 0;
+                    while (index_checked != i)
+                    {
+                        if (help_fun6_check_if_is_beetwin(thisCoordinates[j], thisCoordinates[next], index_checked))
+                        {
+                            if (next < index_checked) {
+                                c_temp2 = new COORDINATES(c_temp.coordinates.GetRange(next, index_checked-next+1).ToArray());
+                            }
+                            else
+                            {
+                                c_temp2 = new COORDINATES(c_temp.coordinates.GetRange(next,c_temp.coordinates.Count).ToArray());
+                                c_temp2.insertRange(c_temp2.count(), c_temp.coordinates.GetRange(0, index_checked+1).ToArray());
+                            }
+                        }
+                        index_checked++;
+                        if (index_checked == thisCoordinates.Count)
+                            index_checked = 0;
+                    }
+                }
+            }
+          
+           
+
+           
+
+            return AllCoordinates;
         }
 
         bool help_fun6_check_if_is_beetwin(Coordinate small, Coordinate larg, int index)
@@ -311,8 +397,15 @@ namespace WoodcatCalculator
                 small = larg;
                 larg = temp;
             }
-            if (coordinates[index] >= small && coordinates[index] <= larg)
-                return true;
+            try
+            {
+                if (coordinates[index] >= small && coordinates[index] <= larg)
+                    return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
             return false;
         }
 
