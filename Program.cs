@@ -6,7 +6,11 @@ using System.Threading.Tasks;
 
 namespace WoodcatCalculator
 {
-    enum types { top = 1, down = 2, right = 4, left = 8 };
+    [Flags]
+    enum types
+    {
+        top = 1, down = 2, right = 4, left = 8
+    };
     class Program
     {
         static void Main(string[] args)
@@ -21,14 +25,23 @@ namespace WoodcatCalculator
                 new Coordinate(0,4)
             }
                 );
+            Console.WriteLine("before add");
             Console.WriteLine(C);
-            Console.WriteLine("add");
+            Console.WriteLine(" after add");
             C.insertRange(2, new Coordinate[]{
                new Coordinate(3, 2),
                 new Coordinate(1, 2),
                 new Coordinate(1, 3),
                 new Coordinate(3,3),
             });
+            Console.WriteLine(C);
+            List<COORDINATES> AllCoordinates = new List<COORDINATES>();
+            //  AllCoordinates.Add(C.fun6(new piece(1, 2), 0));
+            AllCoordinates.AddRange(C.fun6(new piece(1, 2), 0));
+            foreach (var item in AllCoordinates)
+            {
+                Console.WriteLine(item);
+            }
 
 
         }
@@ -95,14 +108,26 @@ namespace WoodcatCalculator
 
     class COORDINATES
     {
-        private List<Coordinate> coordinates;
+        public List<Coordinate> coordinates;
         public COORDINATES()
         {
             coordinates = new List<Coordinate>();
         }
-        public COORDINATES(Coordinate[] c) : base()
+        public COORDINATES(Coordinate[] c)
         {
-            insertRange(0, c);
+            coordinates = new List<Coordinate>(c);
+            update_type();
+
+        }
+        public COORDINATES(List<Coordinate> coordinates)
+        {
+            this.coordinates = new List<Coordinate>(coordinates);
+            update_type();
+        }
+        public COORDINATES(COORDINATES C)
+        {
+            coordinates = new List<Coordinate>(C.coordinates);
+            update_type();
         }
 
         //insert new coordinate or coordinates from the specified undex, update "type" field, and removing unnecessary cordinate from 
@@ -157,16 +182,23 @@ namespace WoodcatCalculator
             return false;
         }
 
-        //remove all coordinate that unnecessary for exemple: (0,0)~~(5,0)~~(6,0)~~.., the coordinate (5,0) is unnecessary.
+        //remove all coordinate that unnecessary for exemple: (0,0)~~(5,0)~~(6,0)~~.., the coordinate (5,0) is unnecessary
+        //or: (0,0)~~(6,0)~~(5,0)~~.., the coordinate (6,0) is not valid and unnecessary.
         public void removeUnnecessaryCoordinate()
         {
+            types t1 = types.down | types.top;
+            types t2 = types.right | types.left;
+            types t3;
+
             int next;
             for (int i = 0; i < coordinates.Count; i++)
             {
                 next = i + 1;
                 if (next == coordinates.Count)
                     next = 0;
-                if (coordinates[i].type == coordinates[next].type)
+
+                t3 = coordinates[i].type | coordinates[next].type;
+                if (t3 == t1 || t3 == t2)
                 {
                     coordinates.Remove(coordinates[next]);
                     i--;
@@ -301,94 +333,124 @@ namespace WoodcatCalculator
                     break;
                 default:
                     throw new Exception();
-                    
+
             }
-          
+
         }
 
         public List<COORDINATES> fun6(piece p, int here_insert)
         {
+            List<COORDINATES> AllCoordinates = new List<COORDINATES>();
             COORDINATES c_temp, c_temp2;
+            Coordinate[] c = help_fun_6_create_sub_array_with_the_new_coordinates(here_insert, p);
 
+            c_temp = new COORDINATES(coordinates);
+            c_temp.coordinates.RemoveAt(here_insert);
+
+            //i use in "insertRang" function, not "InsertRange", because i need it to play some functions...
+            c_temp.insertRange(here_insert, c);
+
+            int next, index_checked;
+            for (int j = 0; j < c_temp.coordinates.Count; j++)
+            {
+                next = j + 1;
+                if (next == c_temp.coordinates.Count)
+                    next = 0;
+
+                index_checked = next + 1;
+                if (index_checked == c_temp.coordinates.Count)
+                    index_checked = 0;
+
+                while (index_checked != j)
+                {
+                  
+                    if( c_temp.help_fun6_check_if_is_beetwin(c_temp.coordinates[j], c_temp.coordinates[next], index_checked))
+                    {
+                        if (next < index_checked)
+                        {
+                            c_temp2 = new COORDINATES(c_temp.coordinates.GetRange(next, index_checked - next + 1));
+  
+                            try   // if the coordinate remainder in c_temp is invalid, so delete c_temp
+                            {
+                                c_temp.removeRange(coordinates[next], index_checked - next + 1);
+                            }
+                            catch(Exception e)
+                            {     //delete
+                                c_temp.coordinates.RemoveRange(0, c_temp.coordinates.Count);
+                                Console.WriteLine(e.StackTrace);
+                            }
+                        }
+                        else
+                        {
+                            c_temp2 = new COORDINATES(c_temp.coordinates.GetRange(next, c_temp.coordinates.Count-next));
+                            c_temp2.coordinates.InsertRange(c_temp2.count(), c_temp.coordinates.GetRange(0, index_checked + 1));
+
+                            c_temp.coordinates.RemoveRange(next, c_temp.coordinates.Count - next);
+
+                            try   // if the coordinate remainder in c_temp is invalid, so delete c_temp
+                            { 
+                                c_temp.removeRange(coordinates[next], index_checked - next + 1);
+                            }
+                            catch (Exception e)
+                            {     //delete
+                                c_temp.coordinates.RemoveRange(0, c_temp.coordinates.Count);
+                                Console.WriteLine(e.StackTrace);
+                            }
+                        }
+                        AllCoordinates.Add(c_temp2);
+                    }
+                    index_checked++;
+                    if (index_checked == c_temp.coordinates.Count)
+                        index_checked = 0;
+
+                }
+            }
+            return AllCoordinates;
+        }
+
+        Coordinate[] help_fun_6_create_sub_array_with_the_new_coordinates(int here_insert, piece p)
+        {
+            Coordinate[] c;
             double x_right, x_left, y_top, y_down;
             help_fun4_init_values(out x_right, out x_left, out y_top, out y_down, here_insert, p);
 
             switch (coordinates[here_insert].type)
             {
                 case types.top:
-                    c_temp = new COORDINATES(new Coordinate[]{
+                    c = new Coordinate[]{
                         new Coordinate(x_right, y_down),
                         new Coordinate(x_right,y_top),
                         new Coordinate(x_left,y_top)
-                    });
+                    };
                     break;
                 case types.down:
-                    c_temp = new COORDINATES(new Coordinate[]{
+                    c = new Coordinate[]{
                         new Coordinate(x_left, y_top),
                         new Coordinate(x_left,y_down),
                         new Coordinate(x_left,y_down)
-                    });
+                    };
                     break;
                 case types.right:
-                    c_temp = new COORDINATES(new Coordinate[]{
+                    c = new Coordinate[]{
                         new Coordinate(x_left, y_top),
                         new Coordinate(x_right,y_top),
                         new Coordinate(x_right,y_down)
-                    });
+                    };
                     break;
                 case types.left:
-                    c_temp = new COORDINATES(new Coordinate[]{
+                    c = new Coordinate[]{
                         new Coordinate(x_right, y_down),
                         new Coordinate(x_left,y_down),
                         new Coordinate(x_left,y_top)
-                    });
+                    };
                     break;
                 default:
                     throw new Exception();
 
             }
+            return c;
 
-            List<  COORDINATES> AllCoordinates = new List<COORDINATES>();
-            AllCoordinates.Add(c_temp);
-
-            List<Coordinate> thisCoordinates;
-            int next, index_checked=0;
-
-            for (int i = 0; i < AllCoordinates.Count; i++)
-            {
-                thisCoordinates = AllCoordinates[i].coordinates;
-                for (int j = 0; j < thisCoordinates.Count; j++)
-                {
-                    next = j + 1;
-                    if (next == thisCoordinates.Count)
-                        next = 0;
-                    while (index_checked != i)
-                    {
-                        if (help_fun6_check_if_is_beetwin(thisCoordinates[j], thisCoordinates[next], index_checked))
-                        {
-                            if (next < index_checked) {
-                                c_temp2 = new COORDINATES(c_temp.coordinates.GetRange(next, index_checked-next+1).ToArray());
-                            }
-                            else
-                            {
-                                c_temp2 = new COORDINATES(c_temp.coordinates.GetRange(next,c_temp.coordinates.Count).ToArray());
-                                c_temp2.insertRange(c_temp2.count(), c_temp.coordinates.GetRange(0, index_checked+1).ToArray());
-                            }
-                        }
-                        index_checked++;
-                        if (index_checked == thisCoordinates.Count)
-                            index_checked = 0;
-                    }
-                }
-            }
-          
-           
-
-           
-
-            return AllCoordinates;
         }
-
         bool help_fun6_check_if_is_beetwin(Coordinate small, Coordinate larg, int index)
         {
             if (small > larg)
