@@ -15,6 +15,8 @@ namespace WoodcatCalculator
     {
         static void Main(string[] args)
         {
+            List<int> arr = new List<int>() { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+            List<int> arr2 = new List<int>();
 
             COORDINATES C = new COORDINATES(
                 new Coordinate[]
@@ -35,9 +37,21 @@ namespace WoodcatCalculator
                 new Coordinate(3,3),
             });
             Console.WriteLine(C);
+
+
+
+            //COORDINATES ccc=new COORDINATES(  new Coordinate[] { new Coordinate(0,0), new Coordinate(0, 2), new Coordinate(2, 5), new Coordinate(2, 0) });
+            // Console.WriteLine(ccc);
+            // Console.WriteLine(ccc.help_fun6_check_if_is_beetwin(new Coordinate(0,2), new Coordinate(0,5), 1));
+
+
+
+            Console.WriteLine("count: " + C.count());
             List<COORDINATES> AllCoordinates = new List<COORDINATES>();
             //  AllCoordinates.Add(C.fun6(new piece(1, 2), 0));
+
             AllCoordinates.AddRange(C.fun6(new piece(1, 2), 0));
+
             foreach (var item in AllCoordinates)
             {
                 Console.WriteLine(item);
@@ -75,7 +89,7 @@ namespace WoodcatCalculator
 
             if (c1.x == c2.x || c1.y == c2.y)
             {
-                if (c1.y < c2.y || c1.x < c2.x)
+                if (c1.y > c2.y || c1.x > c2.x)
                     return true;
                 return false;
             }
@@ -117,17 +131,23 @@ namespace WoodcatCalculator
         {
             coordinates = new List<Coordinate>(c);
             update_type();
+            if (checkIsInvalid())
+                throw new Exception("the coordinates is invalid");
 
         }
         public COORDINATES(List<Coordinate> coordinates)
         {
             this.coordinates = new List<Coordinate>(coordinates);
             update_type();
+            if (checkIsInvalid())
+                throw new Exception("the coordinates is invalid");
         }
         public COORDINATES(COORDINATES C)
         {
             coordinates = new List<Coordinate>(C.coordinates);
             update_type();
+            if (checkIsInvalid())
+                throw new Exception("the coordinates is invalid");
         }
 
         //insert new coordinate or coordinates from the specified undex, update "type" field, and removing unnecessary cordinate from 
@@ -141,6 +161,7 @@ namespace WoodcatCalculator
                 throw new Exception("the coordinates is invalid");
 
         }
+      
 
         //remove coordinate or coordinates from the coordinates array,
         //update "type" field, and removing unnecessary cordinate , finaly, checking if is valid or not.
@@ -154,7 +175,38 @@ namespace WoodcatCalculator
                 throw new Exception("the coordinates is invalid");
 
         }
+        public void removeRange(int from_index, int until_index)
+        {
+            if (from_index <= until_index)
+            {
+                coordinates.RemoveRange(from_index, until_index-from_index+1);
+                update_type();
+                removeUnnecessaryCoordinate();
+                if (checkIsInvalid())
+                    throw new Exception("the coordinates is invalid");
+            }
+            else
+            {
+                coordinates.RemoveRange(from_index, coordinates.Count - from_index );
+                coordinates.RemoveRange(0, until_index+1 );
+                update_type();
+                removeUnnecessaryCoordinate();
+                if (checkIsInvalid())
+                    throw new Exception("the coordinates is invalid");
+            }
+        }
 
+        public List<Coordinate> getRange(int from_index, int until_index)
+        {
+            if (from_index <= until_index)
+            {
+                return coordinates.GetRange(from_index, until_index - from_index + 1);
+            }
+            List<Coordinate> temp = new List<Coordinate>(coordinates.GetRange(from_index, coordinates.Count - from_index));
+            temp.AddRange(coordinates.GetRange(0, until_index + 1));
+            return temp;
+
+        }
         //this function return an index of given coordinate
         //the function uses at "FindIndex" function of "List" that gets a delegate
         public int findIndex(Coordinate c)
@@ -206,7 +258,7 @@ namespace WoodcatCalculator
             }
         }
 
-        //insert value to enum field "type".
+        //insert value to enum field "type" and removes two adjacent coordinates equal .
         private void update_type()
         {
 
@@ -215,8 +267,13 @@ namespace WoodcatCalculator
                 int next = i + 1;
                 if (next == coordinates.Count)
                     next = 0;
+                if (coordinates[next] == coordinates[i])
+                {
+                    coordinates.RemoveAt(next);
+                    i--;
+                }
 
-                if (coordinates[next].y > coordinates[i].y)
+                else if (coordinates[next].y > coordinates[i].y)
                     coordinates[i].type = types.top;
 
                 else if (coordinates[next].y < coordinates[i].y)
@@ -345,64 +402,51 @@ namespace WoodcatCalculator
             Coordinate[] c = help_fun_6_create_sub_array_with_the_new_coordinates(here_insert, p);
 
             c_temp = new COORDINATES(coordinates);
+
+            Console.WriteLine("c_temp.count: "+c_temp.count());
+
             c_temp.coordinates.RemoveAt(here_insert);
 
             //i use in "insertRang" function, not "InsertRange", because i need it to play some functions...
             c_temp.insertRange(here_insert, c);
 
-            int next, index_checked;
-            for (int j = 0; j < c_temp.coordinates.Count; j++)
+            Console.WriteLine("c_temp.count: " + c_temp.count());
+
+            MyIndex next, after_next, index_checked, before_index_checked;
+
+            for (int i = 0; i < c_temp.coordinates.Count; i++)
             {
-                next = j + 1;
-                if (next == c_temp.coordinates.Count)
-                    next = 0;
 
-                index_checked = next + 1;
-                if (index_checked == c_temp.coordinates.Count)
-                    index_checked = 0;
-
-                while (index_checked != j)
+                next = new MyIndex(i + 1, c_temp.coordinates.Count - 1);
+                after_next = new MyIndex(i + 2, c_temp.coordinates.Count - 1);
+                index_checked = new MyIndex(i + 2, c_temp.coordinates.Count - 1);
+                Console.WriteLine("c_temp: "+c_temp);
+                while (index_checked != i)
                 {
-                  
-                    if( c_temp.help_fun6_check_if_is_beetwin(c_temp.coordinates[j], c_temp.coordinates[next], index_checked))
+                    Console.WriteLine("i= {0}, index_checked= {1}",i,index_checked);
+                    Console.WriteLine("c_temp.coordinates[i]={0}, c_temp.coordinates[next.get()]={1}, index_checked.get()={2}",
+                        c_temp.coordinates[i], c_temp.coordinates[next.get()], c_temp.coordinates[index_checked.get()]);
+                    if (c_temp.help_fun6_check_if_is_beetwin(c_temp.coordinates[i], c_temp.coordinates[next.get()], index_checked.get()))
                     {
-                        if (next < index_checked)
-                        {
-                            c_temp2 = new COORDINATES(c_temp.coordinates.GetRange(next, index_checked - next + 1));
-  
+                        before_index_checked = new MyIndex(index_checked);
+                        before_index_checked--;
+
+                        c_temp2 = new COORDINATES(c_temp.getRange(next.get(), index_checked.get()));
+
                             try   // if the coordinate remainder in c_temp is invalid, so delete c_temp
                             {
-                                c_temp.removeRange(coordinates[next], index_checked - next + 1);
-                            }
-                            catch(Exception e)
-                            {     //delete
-                                c_temp.coordinates.RemoveRange(0, c_temp.coordinates.Count);
-                                Console.WriteLine(e.StackTrace);
-                            }
-                        }
-                        else
-                        {
-                            c_temp2 = new COORDINATES(c_temp.coordinates.GetRange(next, c_temp.coordinates.Count-next));
-                            c_temp2.coordinates.InsertRange(c_temp2.count(), c_temp.coordinates.GetRange(0, index_checked + 1));
-
-                            c_temp.coordinates.RemoveRange(next, c_temp.coordinates.Count - next);
-
-                            try   // if the coordinate remainder in c_temp is invalid, so delete c_temp
-                            { 
-                                c_temp.removeRange(coordinates[next], index_checked - next + 1);
+                                c_temp.removeRange(after_next.get(), before_index_checked.get());
                             }
                             catch (Exception e)
                             {     //delete
                                 c_temp.coordinates.RemoveRange(0, c_temp.coordinates.Count);
                                 Console.WriteLine(e.StackTrace);
                             }
-                        }
+                       
                         AllCoordinates.Add(c_temp2);
                     }
+                    index_checked=new MyIndex(index_checked.get(),c_temp.count()-1);
                     index_checked++;
-                    if (index_checked == c_temp.coordinates.Count)
-                        index_checked = 0;
-
                 }
             }
             return AllCoordinates;
@@ -451,7 +495,7 @@ namespace WoodcatCalculator
             return c;
 
         }
-        bool help_fun6_check_if_is_beetwin(Coordinate small, Coordinate larg, int index)
+     public   bool help_fun6_check_if_is_beetwin(Coordinate small, Coordinate larg, int index)
         {
             if (small > larg)
             {
@@ -521,6 +565,103 @@ namespace WoodcatCalculator
                 return 1;
             return 0;
 
+        }
+    }
+
+
+    //class that responsive on indexes
+    class MyIndex
+    {
+        int index, max, min;
+        public MyIndex(int index,int max,int min)
+        {
+            this.max = max;
+            this.min = min;
+            set(index);
+        }
+        public MyIndex(int index, int max) : this(index,max, 0) { }
+        public MyIndex(MyIndex myIndex) : this(myIndex.index, myIndex.max, myIndex.min) { }
+        
+        
+        public void set(int index)
+        {
+            if (index > max && index >= min)
+                throw new Exception("index > max");
+            if(index<min)
+                throw new Exception("index < min");
+            this.index = index;
+        }
+        public int get()
+        {
+            return index;
+        }
+        public static MyIndex operator ++(MyIndex myIndex)
+        {
+            if (myIndex.max > myIndex.index)
+                myIndex.index++;
+            else
+                myIndex.index = myIndex.min;
+            return myIndex;
+        }
+        public static MyIndex operator --(MyIndex myIndex)
+        {
+            if (myIndex.min < myIndex.index)
+                myIndex.index--;
+            else
+                myIndex.index = myIndex.max;
+            return myIndex;
+        }
+        public static bool operator <(MyIndex myIndex,int i)
+        {
+            return myIndex.index < i;
+        }
+        public static bool operator >(MyIndex myIndex, int i)
+        {
+            return myIndex.index > i;
+        }
+        public static bool operator <(int i, MyIndex myIndex)
+        {
+            return i< myIndex.index;
+        }
+        public static bool operator >(int i, MyIndex myIndex)
+        {
+            return i>myIndex.index;
+        }
+        public static bool operator ==(MyIndex myIndex, int i)
+        {
+            return myIndex.index == i;
+        }
+        public static bool operator !=(MyIndex myIndex, int i)
+        {
+            return myIndex.index != i;
+        }
+        public static bool operator ==(int i, MyIndex myIndex)
+        {
+            return myIndex.index == i;
+        }
+        public static bool operator !=(int i, MyIndex myIndex)
+        {
+            return myIndex.index != i;
+        }
+        public static bool operator <(MyIndex myIndex, MyIndex myIndex2)
+        {
+            return myIndex.index < myIndex2;
+        }
+        public static bool operator >(MyIndex myIndex, MyIndex myIndex2)
+        {
+            return myIndex.index >myIndex2;
+        }
+        public static bool operator ==(MyIndex myIndex, MyIndex myIndex2)
+        {
+            return myIndex.index == myIndex2;
+        }
+        public static bool operator !=(MyIndex myIndex, MyIndex myIndex2)
+        {
+            return myIndex.index != myIndex2;
+        }
+        public override string ToString()
+        {
+            return String.Format("index= {0}, max= {1}, min= {2}",index,max,min);
         }
     }
 }
