@@ -161,7 +161,7 @@ namespace WoodcatCalculator
                 throw new Exception("the coordinates is invalid");
 
         }
-      
+
 
         //remove coordinate or coordinates from the coordinates array,
         //update "type" field, and removing unnecessary cordinate , finaly, checking if is valid or not.
@@ -179,7 +179,7 @@ namespace WoodcatCalculator
         {
             if (from_index <= until_index)
             {
-                coordinates.RemoveRange(from_index, until_index-from_index+1);
+                coordinates.RemoveRange(from_index, until_index - from_index + 1);
                 update_type();
                 removeUnnecessaryCoordinate();
                 if (checkIsInvalid())
@@ -187,8 +187,8 @@ namespace WoodcatCalculator
             }
             else
             {
-                coordinates.RemoveRange(from_index, coordinates.Count - from_index );
-                coordinates.RemoveRange(0, until_index+1 );
+                coordinates.RemoveRange(from_index, coordinates.Count - from_index);
+                coordinates.RemoveRange(0, until_index + 1);
                 update_type();
                 removeUnnecessaryCoordinate();
                 if (checkIsInvalid())
@@ -403,7 +403,7 @@ namespace WoodcatCalculator
 
             c_temp = new COORDINATES(coordinates);
 
-            Console.WriteLine("c_temp.count: "+c_temp.count());
+            Console.WriteLine("c_temp.count: " + c_temp.count());
 
             c_temp.coordinates.RemoveAt(here_insert);
 
@@ -420,10 +420,10 @@ namespace WoodcatCalculator
                 next = new MyIndex(i + 1, c_temp.coordinates.Count - 1);
                 after_next = new MyIndex(i + 2, c_temp.coordinates.Count - 1);
                 index_checked = new MyIndex(i + 2, c_temp.coordinates.Count - 1);
-                Console.WriteLine("c_temp: "+c_temp);
+                Console.WriteLine("c_temp: " + c_temp);
                 while (index_checked != i)
                 {
-                    Console.WriteLine("i= {0}, index_checked= {1}",i,index_checked);
+                    Console.WriteLine("i= {0}, index_checked= {1}", i, index_checked);
                     Console.WriteLine("c_temp.coordinates[i]={0}, c_temp.coordinates[next.get()]={1}, index_checked.get()={2}",
                         c_temp.coordinates[i], c_temp.coordinates[next.get()], c_temp.coordinates[index_checked.get()]);
                     if (c_temp.help_fun6_check_if_is_beetwin(c_temp.coordinates[i], c_temp.coordinates[next.get()], index_checked.get()))
@@ -433,19 +433,19 @@ namespace WoodcatCalculator
 
                         c_temp2 = new COORDINATES(c_temp.getRange(next.get(), index_checked.get()));
 
-                            try   // if the coordinate remainder in c_temp is invalid, so delete c_temp
-                            {
-                                c_temp.removeRange(after_next.get(), before_index_checked.get());
-                            }
-                            catch (Exception e)
-                            {     //delete
-                                c_temp.coordinates.RemoveRange(0, c_temp.coordinates.Count);
-                                Console.WriteLine(e.StackTrace);
-                            }
-                       
+                        try   // if the coordinate remainder in c_temp is invalid, so delete c_temp
+                        {
+                            c_temp.removeRange(after_next.get(), before_index_checked.get());
+                        }
+                        catch (Exception e)
+                        {     //delete
+                            c_temp.coordinates.RemoveRange(0, c_temp.coordinates.Count);
+                            Console.WriteLine(e.StackTrace);
+                        }
+
                         AllCoordinates.Add(c_temp2);
                     }
-                    index_checked=new MyIndex(index_checked.get(),c_temp.count()-1);
+                    index_checked = new MyIndex(index_checked.get(), c_temp.count() - 1);
                     index_checked++;
                 }
             }
@@ -495,7 +495,7 @@ namespace WoodcatCalculator
             return c;
 
         }
-     public   bool help_fun6_check_if_is_beetwin(Coordinate small, Coordinate larg, int index)
+        public bool help_fun6_check_if_is_beetwin(Coordinate small, Coordinate larg, int index)
         {
             if (small > larg)
             {
@@ -572,23 +572,20 @@ namespace WoodcatCalculator
     //class that responsive on indexes
     class MyIndex
     {
-        int index, max, min;
-        public MyIndex(int index,int max,int min)
+        int index, max;
+        public MyIndex(int index, int max)
         {
             this.max = max;
-            this.min = min;
+           
             set(index);
         }
-        public MyIndex(int index, int max) : this(index,max, 0) { }
-        public MyIndex(MyIndex myIndex) : this(myIndex.index, myIndex.max, myIndex.min) { }
-        
-        
+        public MyIndex(MyIndex myIndex) : this(myIndex.index, myIndex.max) { }
+
+
         public void set(int index)
         {
-            if (index > max && index >= min)
-                throw new Exception("index > max");
-            if(index<min)
-                throw new Exception("index < min");
+            if (index > max)
+                index = index %(max+1);
             this.index = index;
         }
         public int get()
@@ -600,18 +597,15 @@ namespace WoodcatCalculator
             if (myIndex.max > myIndex.index)
                 myIndex.index++;
             else
-                myIndex.index = myIndex.min;
+                myIndex.index =0;
             return myIndex;
         }
         public static MyIndex operator --(MyIndex myIndex)
         {
-            if (myIndex.min < myIndex.index)
                 myIndex.index--;
-            else
-                myIndex.index = myIndex.max;
             return myIndex;
         }
-        public static bool operator <(MyIndex myIndex,int i)
+        public static bool operator <(MyIndex myIndex, int i)
         {
             return myIndex.index < i;
         }
@@ -621,11 +615,11 @@ namespace WoodcatCalculator
         }
         public static bool operator <(int i, MyIndex myIndex)
         {
-            return i< myIndex.index;
+            return i < myIndex.index;
         }
         public static bool operator >(int i, MyIndex myIndex)
         {
-            return i>myIndex.index;
+            return i > myIndex.index;
         }
         public static bool operator ==(MyIndex myIndex, int i)
         {
@@ -649,7 +643,7 @@ namespace WoodcatCalculator
         }
         public static bool operator >(MyIndex myIndex, MyIndex myIndex2)
         {
-            return myIndex.index >myIndex2;
+            return myIndex.index > myIndex2;
         }
         public static bool operator ==(MyIndex myIndex, MyIndex myIndex2)
         {
@@ -661,7 +655,7 @@ namespace WoodcatCalculator
         }
         public override string ToString()
         {
-            return String.Format("index= {0}, max= {1}, min= {2}",index,max,min);
+            return String.Format("index= {0}, max= {1}", index, max);
         }
     }
 }
