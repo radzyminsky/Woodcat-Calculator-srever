@@ -54,6 +54,7 @@ namespace WoodcatCalculator
 
             foreach (var item in AllCoordinates)
             {
+                Console.WriteLine("----------------------now--------------------");
                 Console.WriteLine(item);
             }
 
@@ -449,6 +450,7 @@ namespace WoodcatCalculator
                     index_checked++;
                 }
             }
+            AllCoordinates.Add(c_temp);
             return AllCoordinates;
         }
 
