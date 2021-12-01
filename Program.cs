@@ -22,19 +22,17 @@ namespace WoodcatCalculator
                 new Coordinate[]
                 {
                 new Coordinate(0, 0),
-                new Coordinate(3, 0),
-                new Coordinate(3,4),
-                new Coordinate(0,4)
-            }
-                );
-            Console.WriteLine("before add");
-            Console.WriteLine(C);
-            Console.WriteLine(" after add");
-            C.insertRange(2, new Coordinate[]{
-               new Coordinate(3, 2),
-                new Coordinate(1, 2),
-                new Coordinate(1, 3),
-                new Coordinate(3,3),
+                new Coordinate(4, 0),
+                new Coordinate(4,1),
+                new Coordinate(5,1),
+                new Coordinate(5,2),
+                new Coordinate(4,2),
+           
+
+               new Coordinate(4,3),
+                new Coordinate(5,3),
+                new Coordinate(5, 4),
+                new Coordinate(0,4),
             });
             Console.WriteLine(C);
 
@@ -50,7 +48,7 @@ namespace WoodcatCalculator
             List<COORDINATES> AllCoordinates = new List<COORDINATES>();
             //  AllCoordinates.Add(C.fun6(new piece(1, 2), 0));
 
-            AllCoordinates.AddRange(C.fun6(new piece(1, 2), 0));
+            AllCoordinates.AddRange(C.fun6(new piece(4,1), 1));
 
             foreach (var item in AllCoordinates)
             {
@@ -422,13 +420,15 @@ namespace WoodcatCalculator
                 after_next = new MyIndex(i + 2, c_temp.coordinates.Count - 1);
                 index_checked = new MyIndex(i + 2, c_temp.coordinates.Count - 1);
                 Console.WriteLine("c_temp: " + c_temp);
+                Console.WriteLine("c_temp.count: "+c_temp.count());
                 while (index_checked != i)
                 {
-                    Console.WriteLine("i= {0}, index_checked= {1}", i, index_checked);
-                    Console.WriteLine("c_temp.coordinates[i]={0}, c_temp.coordinates[next.get()]={1}, index_checked.get()={2}",
+                    Console.WriteLine("i= ({0}), index_checked= ({1})", i, index_checked);
+                    Console.WriteLine("check if: {2}, beetwin coordinats: {0}~~{1}",
                         c_temp.coordinates[i], c_temp.coordinates[next.get()], c_temp.coordinates[index_checked.get()]);
                     if (c_temp.help_fun6_check_if_is_beetwin(c_temp.coordinates[i], c_temp.coordinates[next.get()], index_checked.get()))
                     {
+                        Console.WriteLine("--yes--");
                         before_index_checked = new MyIndex(index_checked);
                         before_index_checked--;
 
@@ -446,6 +446,8 @@ namespace WoodcatCalculator
 
                         AllCoordinates.Add(c_temp2);
                     }
+                    else
+                        Console.WriteLine("--no--");
                     index_checked = new MyIndex(index_checked.get(), c_temp.count() - 1);
                     index_checked++;
                 }
@@ -459,20 +461,22 @@ namespace WoodcatCalculator
             Coordinate[] c;
             double x_right, x_left, y_top, y_down;
             help_fun4_init_values(out x_right, out x_left, out y_top, out y_down, here_insert, p);
+            //------
+            Console.WriteLine("x_right: {0}, x_left: {1}, y_top: {2}, y_down: {3}", x_right, x_left, y_top, y_down);
 
             switch (coordinates[here_insert].type)
             {
                 case types.top:
                     c = new Coordinate[]{
-                        new Coordinate(x_right, y_down),
-                        new Coordinate(x_right,y_top),
-                        new Coordinate(x_left,y_top)
+                        new Coordinate(x_left, y_down),
+                        new Coordinate(x_left,y_top),
+                        new Coordinate(x_right,y_top)
                     };
                     break;
                 case types.down:
                     c = new Coordinate[]{
-                        new Coordinate(x_left, y_top),
-                        new Coordinate(x_left,y_down),
+                        new Coordinate(x_right, y_top),
+                        new Coordinate(x_right,y_down),
                         new Coordinate(x_left,y_down)
                     };
                     break;
@@ -491,9 +495,16 @@ namespace WoodcatCalculator
                     };
                     break;
                 default:
-                    throw new Exception();
+                    throw new Exception("yoe arrived to \"default switch\"");
 
             }
+            //-----------
+            Console.WriteLine("insert sub arrai: " + c);
+            foreach (var item in c)
+            {
+                Console.Write(item + ", ");
+            }
+            //------------
             return c;
 
         }
@@ -512,7 +523,7 @@ namespace WoodcatCalculator
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                //  Console.WriteLine(e.Message);
             }
             return false;
         }
@@ -578,7 +589,7 @@ namespace WoodcatCalculator
         public MyIndex(int index, int max)
         {
             this.max = max;
-           
+
             set(index);
         }
         public MyIndex(MyIndex myIndex) : this(myIndex.index, myIndex.max) { }
@@ -587,7 +598,7 @@ namespace WoodcatCalculator
         public void set(int index)
         {
             if (index > max)
-                index = index %(max+1);
+                index = index % (max + 1);
             this.index = index;
         }
         public int get()
@@ -599,12 +610,12 @@ namespace WoodcatCalculator
             if (myIndex.max > myIndex.index)
                 myIndex.index++;
             else
-                myIndex.index =0;
+                myIndex.index = 0;
             return myIndex;
         }
         public static MyIndex operator --(MyIndex myIndex)
         {
-                myIndex.index--;
+            myIndex.index--;
             return myIndex;
         }
         public static bool operator <(MyIndex myIndex, int i)
