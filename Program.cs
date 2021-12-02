@@ -27,7 +27,7 @@ namespace WoodcatCalculator
                 new Coordinate(5,1),
                 new Coordinate(5,2),
                 new Coordinate(4,2),
-           
+
 
                new Coordinate(4,3),
                 new Coordinate(5,3),
@@ -37,10 +37,9 @@ namespace WoodcatCalculator
             Console.WriteLine(C);
 
 
-
-            //COORDINATES ccc=new COORDINATES(  new Coordinate[] { new Coordinate(0,0), new Coordinate(0, 2), new Coordinate(2, 5), new Coordinate(2, 0) });
-            // Console.WriteLine(ccc);
-            // Console.WriteLine(ccc.help_fun6_check_if_is_beetwin(new Coordinate(0,2), new Coordinate(0,5), 1));
+            //COORDINATES ccc = new COORDINATES(new Coordinate[] { new Coordinate(0, 0), new Coordinate(0, 2), new Coordinate(2, 5), new Coordinate(2, 0) });
+            //Console.WriteLine(ccc);
+            //Console.WriteLine(ccc.help_fun6_check_if_is_beetwin(new Coordinate(0, 2), new Coordinate(0, 5), 1));
 
 
 
@@ -48,11 +47,11 @@ namespace WoodcatCalculator
             List<COORDINATES> AllCoordinates = new List<COORDINATES>();
             //  AllCoordinates.Add(C.fun6(new piece(1, 2), 0));
 
-            AllCoordinates.AddRange(C.fun6(new piece(4,1), 1));
+            AllCoordinates.AddRange(C.fun6(new piece(4, 1), 1));
 
             foreach (var item in AllCoordinates)
             {
-                Console.WriteLine("----------------------now--------------------");
+                Console.WriteLine("----------------------new--------------------");
                 Console.WriteLine(item);
             }
 
@@ -73,6 +72,8 @@ namespace WoodcatCalculator
         {
             this.type = type;
         }
+        public Coordinate(Coordinate c) : this(c.x, c.y, c.type) { }
+
         public static bool operator !=(Coordinate c1, Coordinate c2)
         {
             return !(c1 == c2);
@@ -113,6 +114,7 @@ namespace WoodcatCalculator
         {
             return (c1 > c2 || c1 == c2);
         }
+
         public override string ToString()
         {
             return "(" + x + "," + y + ")[" + type + "]";
@@ -126,28 +128,41 @@ namespace WoodcatCalculator
         {
             coordinates = new List<Coordinate>();
         }
-        public COORDINATES(Coordinate[] c)
+        public COORDINATES(IEnumerable<Coordinate> c) : this()
         {
-            coordinates = new List<Coordinate>(c);
+            Coordinate[] c_;
+
+            if (c.GetType() == typeof(Coordinate[]))
+                c_ = (Coordinate[])c;
+            else if (c.GetType() == typeof(List<Coordinate>))
+                c_ = ((List<Coordinate>)c).ToArray();
+            else
+                throw new Exception("the parameter type is dont match to convert");
+
+            for (int i = 0; i < c_.Length; i++)
+            {
+                coordinates.Add(new Coordinate(c_[i]));
+            }
+
+            ////--------------------
+            //Console.ForegroundColor = ConsoleColor.Green;
+            //Console.WriteLine(this);
+            ////--------------------
+
             update_type();
+
+            ////---------------------
+            //Console.ForegroundColor = ConsoleColor.Yellow;
+            //Console.WriteLine(this);
+            //Console.ForegroundColor = ConsoleColor.White;
+            ////-----------------------
+
             if (checkIsInvalid())
                 throw new Exception("the coordinates is invalid");
 
         }
-        public COORDINATES(List<Coordinate> coordinates)
-        {
-            this.coordinates = new List<Coordinate>(coordinates);
-            update_type();
-            if (checkIsInvalid())
-                throw new Exception("the coordinates is invalid");
-        }
-        public COORDINATES(COORDINATES C)
-        {
-            coordinates = new List<Coordinate>(C.coordinates);
-            update_type();
-            if (checkIsInvalid())
-                throw new Exception("the coordinates is invalid");
-        }
+
+        public COORDINATES(COORDINATES C) : this(C.coordinates) { }
 
         //insert new coordinate or coordinates from the specified undex, update "type" field, and removing unnecessary cordinate from 
         //the coordinates array, finaly, checking if is valid or not.
@@ -420,7 +435,7 @@ namespace WoodcatCalculator
                 after_next = new MyIndex(i + 2, c_temp.coordinates.Count - 1);
                 index_checked = new MyIndex(i + 2, c_temp.coordinates.Count - 1);
                 Console.WriteLine("c_temp: " + c_temp);
-                Console.WriteLine("c_temp.count: "+c_temp.count());
+                Console.WriteLine("c_temp.count: " + c_temp.count());
                 while (index_checked != i)
                 {
                     Console.WriteLine("i= ({0}), index_checked= ({1})", i, index_checked);
@@ -428,7 +443,9 @@ namespace WoodcatCalculator
                         c_temp.coordinates[i], c_temp.coordinates[next.get()], c_temp.coordinates[index_checked.get()]);
                     if (c_temp.help_fun6_check_if_is_beetwin(c_temp.coordinates[i], c_temp.coordinates[next.get()], index_checked.get()))
                     {
+                        Console.ForegroundColor = ConsoleColor.Red;
                         Console.WriteLine("--yes--");
+                        Console.ForegroundColor = ConsoleColor.White;
                         before_index_checked = new MyIndex(index_checked);
                         before_index_checked--;
 
@@ -445,9 +462,13 @@ namespace WoodcatCalculator
                         }
 
                         AllCoordinates.Add(c_temp2);
+                        if (!(i < c_temp.coordinates.Count))
+                            break;
                     }
                     else
+                    {
                         Console.WriteLine("--no--");
+                    }
                     index_checked = new MyIndex(index_checked.get(), c_temp.count() - 1);
                     index_checked++;
                 }
