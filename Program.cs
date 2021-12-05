@@ -31,7 +31,9 @@ namespace WoodcatCalculator
 
                new Coordinate(4,3),
                 new Coordinate(5,3),
-                new Coordinate(5, 4),
+                new Coordinate(5, 5),
+                new Coordinate(4, 5),
+                new Coordinate(4, 4),
                 new Coordinate(0,4),
             });
             Console.WriteLine(C);
@@ -144,18 +146,19 @@ namespace WoodcatCalculator
                 coordinates.Add(new Coordinate(c_[i]));
             }
 
-            ////--------------------
-            //Console.ForegroundColor = ConsoleColor.Green;
-            //Console.WriteLine(this);
-            ////--------------------
+            //--------------------
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine(this);
+            //--------------------
 
             update_type();
+            removeUnnecessaryCoordinate();
 
-            ////---------------------
-            //Console.ForegroundColor = ConsoleColor.Yellow;
-            //Console.WriteLine(this);
-            //Console.ForegroundColor = ConsoleColor.White;
-            ////-----------------------
+            //---------------------
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine(this);
+            Console.ForegroundColor = ConsoleColor.White;
+            //-----------------------
 
             if (checkIsInvalid())
                 throw new Exception("the coordinates is invalid");
@@ -264,7 +267,7 @@ namespace WoodcatCalculator
                     next = 0;
 
                 t3 = coordinates[i].type | coordinates[next].type;
-                if (t3 == t1 || t3 == t2)
+                if ((byte)(t3 & t1)==0 ||(byte) (t3 & t2)==0)
                 {
                     coordinates.Remove(coordinates[next]);
                     i--;
@@ -282,9 +285,9 @@ namespace WoodcatCalculator
                 if (next == coordinates.Count)
                     next = 0;
                 if (coordinates[next] == coordinates[i])
-                {
-                    coordinates.RemoveAt(next);
-                    i--;
+                {                   
+                    coordinates.RemoveAt(i);
+                    i-=2;             
                 }
 
                 else if (coordinates[next].y > coordinates[i].y)
@@ -417,14 +420,10 @@ namespace WoodcatCalculator
 
             c_temp = new COORDINATES(coordinates);
 
-            Console.WriteLine("c_temp.count: " + c_temp.count());
-
             c_temp.coordinates.RemoveAt(here_insert);
 
             //i use in "insertRang" function, not "InsertRange", because i need it to play some functions...
             c_temp.insertRange(here_insert, c);
-
-            Console.WriteLine("c_temp.count: " + c_temp.count());
 
             MyIndex next, after_next, index_checked, before_index_checked;
 
