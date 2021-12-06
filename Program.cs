@@ -15,41 +15,28 @@ namespace WoodcatCalculator
     {
         static void Main(string[] args)
         {
-            List<int> arr = new List<int>() { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
-            List<int> arr2 = new List<int>();
 
             COORDINATES C = new COORDINATES(
                 new Coordinate[]
                 {
                 new Coordinate(0, 0),
+                new Coordinate(2, 0),
+                new Coordinate(2, 2),
+                new Coordinate(3, 2),
+                new Coordinate(3, 0),
                 new Coordinate(4, 0),
-                new Coordinate(4,1),
-                new Coordinate(5,1),
-                new Coordinate(5,2),
-                new Coordinate(4,2),
-
-
-               new Coordinate(4,3),
-                new Coordinate(5,3),
-                new Coordinate(5, 5),
-                new Coordinate(4, 5),
+               
                 new Coordinate(4, 4),
                 new Coordinate(0,4),
             });
             Console.WriteLine(C);
 
 
-            //COORDINATES ccc = new COORDINATES(new Coordinate[] { new Coordinate(0, 0), new Coordinate(0, 2), new Coordinate(2, 5), new Coordinate(2, 0) });
-            //Console.WriteLine(ccc);
-            //Console.WriteLine(ccc.help_fun6_check_if_is_beetwin(new Coordinate(0, 2), new Coordinate(0, 5), 1));
-
-
-
+          
             Console.WriteLine("count: " + C.count());
             List<COORDINATES> AllCoordinates = new List<COORDINATES>();
-            //  AllCoordinates.Add(C.fun6(new piece(1, 2), 0));
 
-            AllCoordinates.AddRange(C.fun6(new piece(4, 1), 1));
+            AllCoordinates.AddRange(C.fun6(new piece(2, 4),0));
 
             foreach (var item in AllCoordinates)
             {
@@ -425,54 +412,72 @@ namespace WoodcatCalculator
             //i use in "insertRang" function, not "InsertRange", because i need it to play some functions...
             c_temp.insertRange(here_insert, c);
 
-            MyIndex next, after_next, index_checked, before_index_checked;
+            AllCoordinates.Add(c_temp);
 
-            for (int i = 0; i < c_temp.coordinates.Count; i++)
+            for (int i = 0; i < AllCoordinates.Count; i++)
             {
 
-                next = new MyIndex(i + 1, c_temp.coordinates.Count - 1);
-                after_next = new MyIndex(i + 2, c_temp.coordinates.Count - 1);
-                index_checked = new MyIndex(i + 2, c_temp.coordinates.Count - 1);
-                Console.WriteLine("c_temp: " + c_temp);
-                Console.WriteLine("c_temp.count: " + c_temp.count());
-                while (index_checked != i)
+
+                MyIndex next, after_next, index_checked, before_index_checked;
+
+
+                for (int j = 0; j < AllCoordinates[i].coordinates.Count; j++)
                 {
-                    Console.WriteLine("i= ({0}), index_checked= ({1})", i, index_checked);
-                    Console.WriteLine("check if: {2}, beetwin coordinats: {0}~~{1}",
-                        c_temp.coordinates[i], c_temp.coordinates[next.get()], c_temp.coordinates[index_checked.get()]);
-                    if (c_temp.help_fun6_check_if_is_beetwin(c_temp.coordinates[i], c_temp.coordinates[next.get()], index_checked.get()))
+
+                    next = new MyIndex(j + 1, AllCoordinates[i].coordinates.Count - 1);
+                    after_next = new MyIndex(j + 2, AllCoordinates[i].coordinates.Count - 1);
+                    index_checked = new MyIndex(j + 2, AllCoordinates[i].coordinates.Count - 1);
+                    //----------------------
+                    Console.WriteLine(" AllCoordinates["+i+"]: " + AllCoordinates[i]);
+                    Console.WriteLine(" AllCoordinates["+i+"]: " + AllCoordinates[i].count());
+                    //---------------------
+                    while (index_checked != j)
                     {
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine("--yes--");
-                        Console.ForegroundColor = ConsoleColor.White;
-                        before_index_checked = new MyIndex(index_checked);
-                        before_index_checked--;
-
-                        c_temp2 = new COORDINATES(c_temp.getRange(next.get(), index_checked.get()));
-
-                        try   // if the coordinate remainder in c_temp is invalid, so delete c_temp
+                        //-----------------------
+                        Console.WriteLine("j= ({0}), index_checked= ({1})", j, index_checked);
+                        Console.WriteLine("check if: {2}, beetwin coordinats: {0}~~{1}",
+                             AllCoordinates[i].coordinates[j], AllCoordinates[i].coordinates[next.get()], AllCoordinates[i].coordinates[index_checked.get()]);
+                        //---------------------------
+                        if (AllCoordinates[i].help_fun6_check_if_is_beetwin(AllCoordinates[i].coordinates[j], AllCoordinates[i].coordinates[next.get()], index_checked.get()))
                         {
-                            c_temp.removeRange(after_next.get(), before_index_checked.get());
-                        }
-                        catch (Exception e)
-                        {     //delete
-                            c_temp.coordinates.RemoveRange(0, c_temp.coordinates.Count);
-                            Console.WriteLine(e.StackTrace);
-                        }
+                            //---------------------
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine("--yes--");
+                            Console.ForegroundColor = ConsoleColor.White;
+                            //-----------------------
+                            before_index_checked = new MyIndex(index_checked);
+                            before_index_checked--;
 
-                        AllCoordinates.Add(c_temp2);
-                        if (!(i < c_temp.coordinates.Count))
-                            break;
+                            c_temp2 = new COORDINATES(AllCoordinates[i].getRange(next.get(), index_checked.get()));
+
+                            try   // if the coordinate remainder in c_temp is invalid, so delete c_temp
+                            {
+                                AllCoordinates[i].removeRange(after_next.get(), before_index_checked.get());
+                            }
+                            catch (Exception e)
+                            {     //delete
+                                AllCoordinates[i].coordinates.RemoveRange(0, AllCoordinates[i].coordinates.Count);
+                                Console.WriteLine(e.StackTrace);
+                            }
+
+                            AllCoordinates.Add(c_temp2);
+                            if (!(j < AllCoordinates[i].coordinates.Count))
+                                break;
+                        }
+                        else
+                        {
+                            Console.WriteLine("--no--");
+                        }
+                        index_checked = new MyIndex(index_checked.get(), AllCoordinates[i].count() - 1);
+                        index_checked++;
                     }
-                    else
-                    {
-                        Console.WriteLine("--no--");
-                    }
-                    index_checked = new MyIndex(index_checked.get(), c_temp.count() - 1);
-                    index_checked++;
+                }
+                if (AllCoordinates[i].coordinates.Count == 0)
+                {
+                    AllCoordinates.RemoveAt(i);
+                    i--;
                 }
             }
-            AllCoordinates.Add(c_temp);
             return AllCoordinates;
         }
 
