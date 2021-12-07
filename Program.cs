@@ -19,24 +19,23 @@ namespace WoodcatCalculator
             COORDINATES C = new COORDINATES(
                 new Coordinate[]
                 {
-                new Coordinate(0, 0),
-                new Coordinate(2, 0),
-                new Coordinate(2, 2),
-                new Coordinate(3, 2),
+                new Coordinate(0, 2),
+                new Coordinate(1, 2),
+                new Coordinate(1, 0),
                 new Coordinate(3, 0),
-                new Coordinate(4, 0),
-               
-                new Coordinate(4, 4),
-                new Coordinate(0,4),
-            });
+                new Coordinate(3, 2),
+                new Coordinate(4, 2),
+                new Coordinate(4, 6),
+                new Coordinate(0,6),
+                });
             Console.WriteLine(C);
 
 
-          
+
             Console.WriteLine("count: " + C.count());
             List<COORDINATES> AllCoordinates = new List<COORDINATES>();
 
-            AllCoordinates.AddRange(C.fun6(new piece(2, 4),0));
+            AllCoordinates.AddRange(C.fun6(new piece(2, 2), 2));
 
             foreach (var item in AllCoordinates)
             {
@@ -133,19 +132,18 @@ namespace WoodcatCalculator
                 coordinates.Add(new Coordinate(c_[i]));
             }
 
-            //--------------------
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine(this);
-            //--------------------
+            ////--------------------
+            //Console.ForegroundColor = ConsoleColor.Green;
+            //Console.WriteLine(this);
+            ////--------------------
 
-            update_type();
-            removeUnnecessaryCoordinate();
+            UpdateAndRemoveUnnecessaryCoordinate();
 
-            //---------------------
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine(this);
-            Console.ForegroundColor = ConsoleColor.White;
-            //-----------------------
+            ////---------------------
+            //Console.ForegroundColor = ConsoleColor.Yellow;
+            //Console.WriteLine(this);
+            //Console.ForegroundColor = ConsoleColor.White;
+            ////-----------------------
 
             if (checkIsInvalid())
                 throw new Exception("the coordinates is invalid");
@@ -159,8 +157,19 @@ namespace WoodcatCalculator
         public void insertRange(int index, Coordinate[] arr)
         {
             coordinates.InsertRange(index, arr);
-            update_type();
-            removeUnnecessaryCoordinate();
+
+            //------------
+            Console.WriteLine("before update and remove:");
+            Console.WriteLine(this);
+            //----------------
+
+            UpdateAndRemoveUnnecessaryCoordinate();
+
+            //------------
+            Console.WriteLine("after update and remove:");
+            Console.WriteLine(this);
+            //----------------
+
             if (checkIsInvalid())
                 throw new Exception("the coordinates is invalid");
 
@@ -173,8 +182,7 @@ namespace WoodcatCalculator
         {
             int index = this.findIndex(c1);
             coordinates.RemoveRange(index, count);
-            update_type();
-            removeUnnecessaryCoordinate();
+            UpdateAndRemoveUnnecessaryCoordinate();
             if (checkIsInvalid())
                 throw new Exception("the coordinates is invalid");
 
@@ -184,8 +192,7 @@ namespace WoodcatCalculator
             if (from_index <= until_index)
             {
                 coordinates.RemoveRange(from_index, until_index - from_index + 1);
-                update_type();
-                removeUnnecessaryCoordinate();
+                UpdateAndRemoveUnnecessaryCoordinate();
                 if (checkIsInvalid())
                     throw new Exception("the coordinates is invalid");
             }
@@ -193,8 +200,7 @@ namespace WoodcatCalculator
             {
                 coordinates.RemoveRange(from_index, coordinates.Count - from_index);
                 coordinates.RemoveRange(0, until_index + 1);
-                update_type();
-                removeUnnecessaryCoordinate();
+                UpdateAndRemoveUnnecessaryCoordinate();
                 if (checkIsInvalid())
                     throw new Exception("the coordinates is invalid");
             }
@@ -240,57 +246,65 @@ namespace WoodcatCalculator
 
         //remove all coordinate that unnecessary for exemple: (0,0)~~(5,0)~~(6,0)~~.., the coordinate (5,0) is unnecessary
         //or: (0,0)~~(6,0)~~(5,0)~~.., the coordinate (6,0) is not valid and unnecessary.
-        public void removeUnnecessaryCoordinate()
+        public void UpdateAndRemoveUnnecessaryCoordinate()
         {
             types t1 = types.down | types.top;
             types t2 = types.right | types.left;
             types t3;
 
             int next;
-            for (int i = 0; i < coordinates.Count; i++)
+            bool flag = true;
+            while (flag)
             {
-                next = i + 1;
-                if (next == coordinates.Count)
-                    next = 0;
+                update_type();
+                flag = false;
 
-                t3 = coordinates[i].type | coordinates[next].type;
-                if ((byte)(t3 & t1)==0 ||(byte) (t3 & t2)==0)
+                for (int i = 0; i < coordinates.Count; i++)
                 {
-                    coordinates.Remove(coordinates[next]);
-                    i--;
-                }
+                    next = i + 1;
+                    if (next == coordinates.Count)
+                        next = 0;
+
+                    t3 = coordinates[i].type | coordinates[next].type;
+                    if ((byte)(t3 & t1) == 0 || (byte)(t3 & t2) == 0)
+                    {
+                        coordinates.Remove(coordinates[next]);
+                        i--;
+
+                        //becaus now, maybe the "type" field of each coordinate changes
+                        flag = true;
+                    }
+                }                
             }
         }
 
         //insert value to enum field "type" and removes two adjacent coordinates equal .
         private void update_type()
-        {
-
-            for (int i = 0; i < coordinates.Count; i++)
+        {           
+            for (int current = 0; current < coordinates.Count; current++)
             {
-                int next = i + 1;
+                int next = current + 1;
                 if (next == coordinates.Count)
                     next = 0;
-                if (coordinates[next] == coordinates[i])
-                {                   
-                    coordinates.RemoveAt(i);
-                    i-=2;             
+                if (coordinates[next] == coordinates[current])
+                {
+                    coordinates.RemoveAt(current);
+                    current--;
                 }
+                else if (coordinates[next].y > coordinates[current].y)
+                    coordinates[current].type = types.top;
 
-                else if (coordinates[next].y > coordinates[i].y)
-                    coordinates[i].type = types.top;
+                else if (coordinates[next].y < coordinates[current].y)
+                    coordinates[current].type = types.down;
 
-                else if (coordinates[next].y < coordinates[i].y)
-                    coordinates[i].type = types.down;
-
-                else if (coordinates[next].x > coordinates[i].x)
-                    coordinates[i].type = types.right;
+                else if (coordinates[next].x > coordinates[current].x)
+                    coordinates[current].type = types.right;
 
                 else
-                    coordinates[i].type = types.left;
+                    coordinates[current].type = types.left;
             }
-
         }
+       
 
         //The function receives an index and checks whether the point is external.
         //exemple for internal point: (0,0)~~(5,0)~~(5,1)~~(6,1)~~(6,4)~~(0,4)
@@ -404,13 +418,22 @@ namespace WoodcatCalculator
             List<COORDINATES> AllCoordinates = new List<COORDINATES>();
             COORDINATES c_temp, c_temp2;
             Coordinate[] c = help_fun_6_create_sub_array_with_the_new_coordinates(here_insert, p);
-
+            //-----------
+            Console.Write("insert sub arrai: ");
+            foreach (var item in c)
+            {
+                Console.Write(item + ", ");
+            }
+            Console.WriteLine("; instead of coordinate: "+coordinates[here_insert]);
+            //------------
             c_temp = new COORDINATES(coordinates);
 
             c_temp.coordinates.RemoveAt(here_insert);
 
             //i use in "insertRang" function, not "InsertRange", because i need it to play some functions...
             c_temp.insertRange(here_insert, c);
+
+
 
             AllCoordinates.Add(c_temp);
 
@@ -428,8 +451,8 @@ namespace WoodcatCalculator
                     after_next = new MyIndex(j + 2, AllCoordinates[i].coordinates.Count - 1);
                     index_checked = new MyIndex(j + 2, AllCoordinates[i].coordinates.Count - 1);
                     //----------------------
-                    Console.WriteLine(" AllCoordinates["+i+"]: " + AllCoordinates[i]);
-                    Console.WriteLine(" AllCoordinates["+i+"]: " + AllCoordinates[i].count());
+                    Console.WriteLine(" AllCoordinates[" + i + "]: " + AllCoordinates[i]);
+                    Console.WriteLine(" AllCoordinates[" + i + "].count: " + AllCoordinates[i].count());
                     //---------------------
                     while (index_checked != j)
                     {
@@ -440,7 +463,7 @@ namespace WoodcatCalculator
                         //---------------------------
                         if (AllCoordinates[i].help_fun6_check_if_is_beetwin(AllCoordinates[i].coordinates[j], AllCoordinates[i].coordinates[next.get()], index_checked.get()))
                         {
-                            //---------------------
+                            //-----------------------
                             Console.ForegroundColor = ConsoleColor.Red;
                             Console.WriteLine("--yes--");
                             Console.ForegroundColor = ConsoleColor.White;
@@ -523,15 +546,7 @@ namespace WoodcatCalculator
                     throw new Exception("yoe arrived to \"default switch\"");
 
             }
-            //-----------
-            Console.WriteLine("insert sub arrai: " + c);
-            foreach (var item in c)
-            {
-                Console.Write(item + ", ");
-            }
-            //------------
             return c;
-
         }
         public bool help_fun6_check_if_is_beetwin(Coordinate small, Coordinate larg, int index)
         {
