@@ -16,28 +16,49 @@ namespace WoodcatCalculator
         static void Main(string[] args)
         {
 
-            COORDINATES C = new COORDINATES(
-                new Coordinate[]
+            Coordinates C = new Coordinates(
+                new OneCoordinate[]
                 {
-                new Coordinate(0, 2),
-                new Coordinate(1, 2),
-                new Coordinate(1, 0),
-                new Coordinate(3, 0),
-                new Coordinate(3, 2),
-                new Coordinate(4, 2),
-                new Coordinate(4, 6),
-                new Coordinate(0,6),
+                new OneCoordinate(0, 2),
+                new OneCoordinate(2, 2),
+                new OneCoordinate(2, 0),
+                new OneCoordinate(4, 0),
+                new OneCoordinate(4, 1),
+                new OneCoordinate(5, 1),
+                new OneCoordinate(5, 5),
+                new OneCoordinate(4,5),
+                new OneCoordinate(4,6),
+                new OneCoordinate(2,6),
+                new OneCoordinate(2,5),
+                new OneCoordinate(0,5)
+                //new OneCoordinate(0,1),
+                //new OneCoordinate(2,1),
+                //new OneCoordinate(2,0),
+                //new OneCoordinate(6,0),
+                //new OneCoordinate(6,6),
+                //new OneCoordinate(4,6),
+                //new OneCoordinate(4,7),
+                //new OneCoordinate(2,7),
+                //new OneCoordinate(2,6),
+                //new OneCoordinate(1,6),
+                //new OneCoordinate(1,5),
+                //new OneCoordinate(0,5),
+                //new OneCoordinate(0,3),
+                //new OneCoordinate(1,3),
+                //new OneCoordinate(1,2),
+                //new OneCoordinate(0,2),
                 });
             Console.WriteLine(C);
 
 
 
             Console.WriteLine("count: " + C.count());
-            List<COORDINATES> AllCoordinates = new List<COORDINATES>();
+            AllCoordinatesList AllCoordinates = new AllCoordinatesList();
 
-            AllCoordinates.AddRange(C.fun6(new piece(2, 2), 2));
+            AllCoordinates.All.AddRange(C.fun6(new piece(2, 6), 9));
+           // AllCoordinates.All.AddRange(C.fun6(new piece(2, 5), 9));
 
-            foreach (var item in AllCoordinates)
+            foreach (var item in AllCoordinates.All)
             {
                 Console.WriteLine("----------------------new--------------------");
                 Console.WriteLine(item);
@@ -46,33 +67,46 @@ namespace WoodcatCalculator
 
         }
     }
-    class Coordinate
+    class AllCoordinatesList
+    {
+        public List<Coordinates> All = new List<Coordinates>();
+        public override string ToString()
+        {
+            string str = "";
+            for (int i = 0; i < All.Count; i++)
+            {
+                str += i + ": " + All[i] + "\n";
+            }
+            return str;
+        }
+    }
+    class OneCoordinate
     {
         public double x;
         public double y;
         public types type;
-        public Coordinate(double x, double y)
+        public OneCoordinate(double x, double y)
         {
             this.x = x;
             this.y = y;
         }
-        public Coordinate(double x, double y, types type) : this(x, y)
+        public OneCoordinate(double x, double y, types type) : this(x, y)
         {
             this.type = type;
         }
-        public Coordinate(Coordinate c) : this(c.x, c.y, c.type) { }
+        public OneCoordinate(OneCoordinate c) : this(c.x, c.y, c.type) { }
 
-        public static bool operator !=(Coordinate c1, Coordinate c2)
+        public static bool operator !=(OneCoordinate c1, OneCoordinate c2)
         {
             return !(c1 == c2);
         }
-        public static bool operator ==(Coordinate c1, Coordinate c2)
+        public static bool operator ==(OneCoordinate c1, OneCoordinate c2)
         {
             if (c1.x == c2.x && c1.y == c2.y)
                 return true;
             return false;
         }
-        public static bool operator >(Coordinate c1, Coordinate c2)
+        public static bool operator >(OneCoordinate c1, OneCoordinate c2)
         {
 
             if (c1.x == c2.x || c1.y == c2.y)
@@ -83,7 +117,7 @@ namespace WoodcatCalculator
             }
             throw (new Exception("a and b aren't on the same axis "));
         }
-        public static bool operator <(Coordinate c1, Coordinate c2)
+        public static bool operator <(OneCoordinate c1, OneCoordinate c2)
         {
 
             if (c1.x == c2.x || c1.y == c2.y)
@@ -94,11 +128,11 @@ namespace WoodcatCalculator
             }
             throw (new Exception("a and b aren't on the same axis "));
         }
-        public static bool operator <=(Coordinate c1, Coordinate c2)
+        public static bool operator <=(OneCoordinate c1, OneCoordinate c2)
         {
             return (c1 < c2 || c1 == c2);
         }
-        public static bool operator >=(Coordinate c1, Coordinate c2)
+        public static bool operator >=(OneCoordinate c1, OneCoordinate c2)
         {
             return (c1 > c2 || c1 == c2);
         }
@@ -109,27 +143,27 @@ namespace WoodcatCalculator
         }
     }
 
-    class COORDINATES
+    class Coordinates
     {
-        public List<Coordinate> coordinates;
-        public COORDINATES()
+        public List<OneCoordinate> coordinates;
+        public Coordinates()
         {
-            coordinates = new List<Coordinate>();
+            coordinates = new List<OneCoordinate>();
         }
-        public COORDINATES(IEnumerable<Coordinate> c) : this()
+        public Coordinates(IEnumerable<OneCoordinate> c) : this()
         {
-            Coordinate[] c_;
+            OneCoordinate[] c_;
 
-            if (c.GetType() == typeof(Coordinate[]))
-                c_ = (Coordinate[])c;
-            else if (c.GetType() == typeof(List<Coordinate>))
-                c_ = ((List<Coordinate>)c).ToArray();
+            if (c.GetType() == typeof(OneCoordinate[]))
+                c_ = (OneCoordinate[])c;
+            else if (c.GetType() == typeof(List<OneCoordinate>))
+                c_ = ((List<OneCoordinate>)c).ToArray();
             else
                 throw new Exception("the parameter type is dont match to convert");
 
             for (int i = 0; i < c_.Length; i++)
             {
-                coordinates.Add(new Coordinate(c_[i]));
+                coordinates.Add(new OneCoordinate(c_[i]));
             }
 
             ////--------------------
@@ -137,7 +171,7 @@ namespace WoodcatCalculator
             //Console.WriteLine(this);
             ////--------------------
 
-            UpdateAndRemoveUnnecessaryCoordinate();
+            UpdateTypeAndRemoveUnnecessaryCoordinate();
 
             ////---------------------
             //Console.ForegroundColor = ConsoleColor.Yellow;
@@ -150,11 +184,11 @@ namespace WoodcatCalculator
 
         }
 
-        public COORDINATES(COORDINATES C) : this(C.coordinates) { }
+        public Coordinates(Coordinates C) : this(C.coordinates) { }
 
         //insert new coordinate or coordinates from the specified undex, update "type" field, and removing unnecessary cordinate from 
         //the coordinates array, finaly, checking if is valid or not.
-        public void insertRange(int index, Coordinate[] arr)
+        public void insertRange(int index, OneCoordinate[] arr)
         {
             coordinates.InsertRange(index, arr);
 
@@ -163,7 +197,7 @@ namespace WoodcatCalculator
             Console.WriteLine(this);
             //----------------
 
-            UpdateAndRemoveUnnecessaryCoordinate();
+            UpdateTypeAndRemoveUnnecessaryCoordinate();
 
             //------------
             Console.WriteLine("after update and remove:");
@@ -178,11 +212,11 @@ namespace WoodcatCalculator
 
         //remove coordinate or coordinates from the coordinates array,
         //update "type" field, and removing unnecessary cordinate , finaly, checking if is valid or not.
-        public void removeRange(Coordinate c1, int count)
+        public void removeRange(OneCoordinate c1, int count)
         {
             int index = this.findIndex(c1);
             coordinates.RemoveRange(index, count);
-            UpdateAndRemoveUnnecessaryCoordinate();
+            UpdateTypeAndRemoveUnnecessaryCoordinate();
             if (checkIsInvalid())
                 throw new Exception("the coordinates is invalid");
 
@@ -192,7 +226,7 @@ namespace WoodcatCalculator
             if (from_index <= until_index)
             {
                 coordinates.RemoveRange(from_index, until_index - from_index + 1);
-                UpdateAndRemoveUnnecessaryCoordinate();
+                UpdateTypeAndRemoveUnnecessaryCoordinate();
                 if (checkIsInvalid())
                     throw new Exception("the coordinates is invalid");
             }
@@ -200,26 +234,26 @@ namespace WoodcatCalculator
             {
                 coordinates.RemoveRange(from_index, coordinates.Count - from_index);
                 coordinates.RemoveRange(0, until_index + 1);
-                UpdateAndRemoveUnnecessaryCoordinate();
+                UpdateTypeAndRemoveUnnecessaryCoordinate();
                 if (checkIsInvalid())
                     throw new Exception("the coordinates is invalid");
             }
         }
 
-        public List<Coordinate> getRange(int from_index, int until_index)
+        public List<OneCoordinate> getRange(int from_index, int until_index)
         {
             if (from_index <= until_index)
             {
                 return coordinates.GetRange(from_index, until_index - from_index + 1);
             }
-            List<Coordinate> temp = new List<Coordinate>(coordinates.GetRange(from_index, coordinates.Count - from_index));
+            List<OneCoordinate> temp = new List<OneCoordinate>(coordinates.GetRange(from_index, coordinates.Count - from_index));
             temp.AddRange(coordinates.GetRange(0, until_index + 1));
             return temp;
 
         }
         //this function return an index of given coordinate
         //the function uses at "FindIndex" function of "List" that gets a delegate
-        public int findIndex(Coordinate c)
+        public int findIndex(OneCoordinate c)
         {
             return coordinates.FindIndex((c2) => { return c2 == c; });
         }
@@ -246,7 +280,7 @@ namespace WoodcatCalculator
 
         //remove all coordinate that unnecessary for exemple: (0,0)~~(5,0)~~(6,0)~~.., the coordinate (5,0) is unnecessary
         //or: (0,0)~~(6,0)~~(5,0)~~.., the coordinate (6,0) is not valid and unnecessary.
-        public void UpdateAndRemoveUnnecessaryCoordinate()
+        public void UpdateTypeAndRemoveUnnecessaryCoordinate()
         {
             types t1 = types.down | types.top;
             types t2 = types.right | types.left;
@@ -274,13 +308,13 @@ namespace WoodcatCalculator
                         //becaus now, maybe the "type" field of each coordinate changes
                         flag = true;
                     }
-                }                
+                }
             }
         }
 
         //insert value to enum field "type" and removes two adjacent coordinates equal .
         private void update_type()
-        {           
+        {
             for (int current = 0; current < coordinates.Count; current++)
             {
                 int next = current + 1;
@@ -304,7 +338,7 @@ namespace WoodcatCalculator
                     coordinates[current].type = types.left;
             }
         }
-       
+
 
         //The function receives an index and checks whether the point is external.
         //exemple for internal point: (0,0)~~(5,0)~~(5,1)~~(6,1)~~(6,4)~~(0,4)
@@ -337,8 +371,8 @@ namespace WoodcatCalculator
             // Console.WriteLine("check if can insert piece: (" + x_left + "," + x_right + "," + y_top + "," + y_down + ")\nat coordinate: " +coordinates[ index_of_coord]);
 
             Console.WriteLine("check if can insert piece: {0}{1}{2}{3}\nat coordinate: {4}"
-                , new Coordinate(x_left, y_down), new Coordinate(x_right, y_down), new Coordinate(x_right, y_top),
-                new Coordinate(x_left, y_top), coordinates[index_of_coord]);
+                , new OneCoordinate(x_left, y_down), new OneCoordinate(x_right, y_down), new OneCoordinate(x_right, y_top),
+                new OneCoordinate(x_left, y_top), coordinates[index_of_coord]);
 
             int current = index_of_coord + 1;
             int next;
@@ -379,7 +413,7 @@ namespace WoodcatCalculator
         }
         void help_fun4_init_values(out double x_right, out double x_left, out double y_top, out double y_down, int index_of_coord, piece p)
         {
-            Coordinate c = coordinates[index_of_coord];
+            OneCoordinate c = coordinates[index_of_coord];
             switch (c.type)
             {
                 case types.top:
@@ -413,20 +447,20 @@ namespace WoodcatCalculator
 
         }
 
-        public List<COORDINATES> fun6(piece p, int here_insert)
+        public List<Coordinates> fun6(piece p, int here_insert)
         {
-            List<COORDINATES> AllCoordinates = new List<COORDINATES>();
-            COORDINATES c_temp, c_temp2;
-            Coordinate[] c = help_fun_6_create_sub_array_with_the_new_coordinates(here_insert, p);
+            AllCoordinatesList AllList = new AllCoordinatesList();
+            Coordinates c_temp, c_temp2;
+            OneCoordinate[] c = help_fun_6_create_sub_array_with_the_new_coordinates(here_insert, p);
             //-----------
             Console.Write("insert sub arrai: ");
             foreach (var item in c)
             {
                 Console.Write(item + ", ");
             }
-            Console.WriteLine("; instead of coordinate: "+coordinates[here_insert]);
+            Console.WriteLine("; instead of coordinate: " + coordinates[here_insert]);
             //------------
-            c_temp = new COORDINATES(coordinates);
+            c_temp = new Coordinates(coordinates);
 
             c_temp.coordinates.RemoveAt(here_insert);
 
@@ -435,33 +469,33 @@ namespace WoodcatCalculator
 
 
 
-            AllCoordinates.Add(c_temp);
+            AllList.All.Add(c_temp);
 
-            for (int i = 0; i < AllCoordinates.Count; i++)
+            for (int i = 0; i < AllList.All.Count; i++)
             {
 
 
                 MyIndex next, after_next, index_checked, before_index_checked;
 
 
-                for (int j = 0; j < AllCoordinates[i].coordinates.Count; j++)
+                for (int j = 0; j < AllList.All[i].coordinates.Count; j++)
                 {
 
-                    next = new MyIndex(j + 1, AllCoordinates[i].coordinates.Count - 1);
-                    after_next = new MyIndex(j + 2, AllCoordinates[i].coordinates.Count - 1);
-                    index_checked = new MyIndex(j + 2, AllCoordinates[i].coordinates.Count - 1);
+                    next = new MyIndex(j + 1, AllList.All[i].coordinates.Count - 1);
+                    after_next = new MyIndex(j + 2, AllList.All[i].coordinates.Count - 1);
+                    index_checked = new MyIndex(j + 2, AllList.All[i].coordinates.Count - 1);
                     //----------------------
-                    Console.WriteLine(" AllCoordinates[" + i + "]: " + AllCoordinates[i]);
-                    Console.WriteLine(" AllCoordinates[" + i + "].count: " + AllCoordinates[i].count());
+                    Console.WriteLine(" AllCoordinates[" + i + "]: " + AllList.All[i]);
+                    Console.WriteLine(" AllCoordinates[" + i + "].count: " + AllList.All[i].count());
                     //---------------------
                     while (index_checked != j)
                     {
                         //-----------------------
                         Console.WriteLine("j= ({0}), index_checked= ({1})", j, index_checked);
                         Console.WriteLine("check if: {2}, beetwin coordinats: {0}~~{1}",
-                             AllCoordinates[i].coordinates[j], AllCoordinates[i].coordinates[next.get()], AllCoordinates[i].coordinates[index_checked.get()]);
+                             AllList.All[i].coordinates[j], AllList.All[i].coordinates[next.get()], AllList.All[i].coordinates[index_checked.get()]);
                         //---------------------------
-                        if (AllCoordinates[i].help_fun6_check_if_is_beetwin(AllCoordinates[i].coordinates[j], AllCoordinates[i].coordinates[next.get()], index_checked.get()))
+                        if (AllList.All[i].help_fun6_check_if_is_beetwin(AllList.All[i].coordinates[j], AllList.All[i].coordinates[next.get()], index_checked.get()))
                         {
                             //-----------------------
                             Console.ForegroundColor = ConsoleColor.Red;
@@ -471,42 +505,51 @@ namespace WoodcatCalculator
                             before_index_checked = new MyIndex(index_checked);
                             before_index_checked--;
 
-                            c_temp2 = new COORDINATES(AllCoordinates[i].getRange(next.get(), index_checked.get()));
+                            c_temp2 = new Coordinates(AllList.All[i].getRange(next.get(), index_checked.get()));
 
                             try   // if the coordinate remainder in c_temp is invalid, so delete c_temp
                             {
-                                AllCoordinates[i].removeRange(after_next.get(), before_index_checked.get());
+                                AllList.All[i].removeRange(after_next.get(), before_index_checked.get());
                             }
                             catch (Exception e)
                             {     //delete
-                                AllCoordinates[i].coordinates.RemoveRange(0, AllCoordinates[i].coordinates.Count);
+                                AllList.All[i].coordinates.RemoveRange(0, AllList.All[i].coordinates.Count);
                                 Console.WriteLine(e.StackTrace);
                             }
 
-                            AllCoordinates.Add(c_temp2);
-                            if (!(j < AllCoordinates[i].coordinates.Count))
+                            AllList.All.Add(c_temp2);
+
+                            //---------------------
+                            Console.WriteLine(AllList);
+                            //----------------------
+
+                            if (!(j < AllList.All[i].coordinates.Count))
                                 break;
+                            next = new MyIndex(j + 1, AllList.All[i].coordinates.Count - 1);
+                            after_next = new MyIndex(j + 2, AllList.All[i].coordinates.Count - 1);
+                            index_checked = new MyIndex(j + 2, AllList.All[i].coordinates.Count - 1);
                         }
                         else
                         {
                             Console.WriteLine("--no--");
+
+                            index_checked = new MyIndex(index_checked.get(), AllList.All[i].count() - 1);
+                            index_checked++;
                         }
-                        index_checked = new MyIndex(index_checked.get(), AllCoordinates[i].count() - 1);
-                        index_checked++;
                     }
                 }
-                if (AllCoordinates[i].coordinates.Count == 0)
+                if (AllList.All[i].coordinates.Count == 0)
                 {
-                    AllCoordinates.RemoveAt(i);
+                    AllList.All.RemoveAt(i);
                     i--;
                 }
             }
-            return AllCoordinates;
+            return AllList.All;
         }
 
-        Coordinate[] help_fun_6_create_sub_array_with_the_new_coordinates(int here_insert, piece p)
+        OneCoordinate[] help_fun_6_create_sub_array_with_the_new_coordinates(int here_insert, piece p)
         {
-            Coordinate[] c;
+            OneCoordinate[] c;
             double x_right, x_left, y_top, y_down;
             help_fun4_init_values(out x_right, out x_left, out y_top, out y_down, here_insert, p);
             //------
@@ -515,31 +558,31 @@ namespace WoodcatCalculator
             switch (coordinates[here_insert].type)
             {
                 case types.top:
-                    c = new Coordinate[]{
-                        new Coordinate(x_left, y_down),
-                        new Coordinate(x_left,y_top),
-                        new Coordinate(x_right,y_top)
+                    c = new OneCoordinate[]{
+                        new OneCoordinate(x_left, y_down),
+                        new OneCoordinate(x_left,y_top),
+                        new OneCoordinate(x_right,y_top)
                     };
                     break;
                 case types.down:
-                    c = new Coordinate[]{
-                        new Coordinate(x_right, y_top),
-                        new Coordinate(x_right,y_down),
-                        new Coordinate(x_left,y_down)
+                    c = new OneCoordinate[]{
+                        new OneCoordinate(x_right, y_top),
+                        new OneCoordinate(x_right,y_down),
+                        new OneCoordinate(x_left,y_down)
                     };
                     break;
                 case types.right:
-                    c = new Coordinate[]{
-                        new Coordinate(x_left, y_top),
-                        new Coordinate(x_right,y_top),
-                        new Coordinate(x_right,y_down)
+                    c = new OneCoordinate[]{
+                        new OneCoordinate(x_left, y_top),
+                        new OneCoordinate(x_right,y_top),
+                        new OneCoordinate(x_right,y_down)
                     };
                     break;
                 case types.left:
-                    c = new Coordinate[]{
-                        new Coordinate(x_right, y_down),
-                        new Coordinate(x_left,y_down),
-                        new Coordinate(x_left,y_top)
+                    c = new OneCoordinate[]{
+                        new OneCoordinate(x_right, y_down),
+                        new OneCoordinate(x_left,y_down),
+                        new OneCoordinate(x_left,y_top)
                     };
                     break;
                 default:
@@ -548,11 +591,11 @@ namespace WoodcatCalculator
             }
             return c;
         }
-        public bool help_fun6_check_if_is_beetwin(Coordinate small, Coordinate larg, int index)
+        public bool help_fun6_check_if_is_beetwin(OneCoordinate small, OneCoordinate larg, int index)
         {
             if (small > larg)
             {
-                Coordinate temp = small;
+                OneCoordinate temp = small;
                 small = larg;
                 larg = temp;
             }
@@ -571,7 +614,7 @@ namespace WoodcatCalculator
         public override string ToString()
         {
             string str = "";
-            foreach (Coordinate c in coordinates)
+            foreach (OneCoordinate c in coordinates)
             {
                 if (check_if_is_external(coordinates.IndexOf(c)))
                     str += "(externul)";
