@@ -19,18 +19,17 @@ namespace WoodcatCalculator
             Coordinates C = new Coordinates(
                 new OneCoordinate[]
                 {
-                new OneCoordinate(0, 2),
-                new OneCoordinate(2, 2),
-                new OneCoordinate(2, 0),
+                new OneCoordinate(0, 3),
+               
+                new OneCoordinate(1, 3),
+                new OneCoordinate(1, 0),
                 new OneCoordinate(4, 0),
-                new OneCoordinate(4, 1),
-                new OneCoordinate(5, 1),
-                new OneCoordinate(5, 5),
-                new OneCoordinate(4,5),
-                new OneCoordinate(4,6),
-                new OneCoordinate(2,6),
+                new OneCoordinate(4, 4),
+                new OneCoordinate(2, 4),
                 new OneCoordinate(2,5),
+                new OneCoordinate(0,5),
                 new OneCoordinate(0,5)
+               
                 //new OneCoordinate(0,1),
                 //new OneCoordinate(2,1),
                 //new OneCoordinate(2,0),
@@ -55,7 +54,7 @@ namespace WoodcatCalculator
             Console.WriteLine("count: " + C.count());
             AllCoordinatesList AllCoordinates = new AllCoordinatesList();
 
-            AllCoordinates.All.AddRange(C.fun6(new piece(2, 6), 9));
+            AllCoordinates.All.AddRange(C.fun6(new piece(3, 1), 6));
            // AllCoordinates.All.AddRange(C.fun6(new piece(2, 5), 9));
 
             foreach (var item in AllCoordinates.All)
@@ -251,6 +250,7 @@ namespace WoodcatCalculator
             return temp;
 
         }
+        
         //this function return an index of given coordinate
         //the function uses at "FindIndex" function of "List" that gets a delegate
         public int findIndex(OneCoordinate c)
@@ -449,7 +449,10 @@ namespace WoodcatCalculator
 
         public List<Coordinates> fun6(piece p, int here_insert)
         {
-            AllCoordinatesList AllList = new AllCoordinatesList();
+            List<Coordinates> AllList = new List<Coordinates>();
+
+         //   AllCoordinatesList AllList = new AllCoordinatesList();
+
             Coordinates c_temp, c_temp2;
             OneCoordinate[] c = help_fun_6_create_sub_array_with_the_new_coordinates(here_insert, p);
             //-----------
@@ -469,33 +472,33 @@ namespace WoodcatCalculator
 
 
 
-            AllList.All.Add(c_temp);
+            AllList.Add(c_temp);
 
-            for (int i = 0; i < AllList.All.Count; i++)
+            for (int i = 0; i < AllList.Count; i++)
             {
 
 
                 MyIndex next, after_next, index_checked, before_index_checked;
 
 
-                for (int j = 0; j < AllList.All[i].coordinates.Count; j++)
+                for (int j = 0; j < AllList[i].coordinates.Count; j++)
                 {
 
-                    next = new MyIndex(j + 1, AllList.All[i].coordinates.Count - 1);
-                    after_next = new MyIndex(j + 2, AllList.All[i].coordinates.Count - 1);
-                    index_checked = new MyIndex(j + 2, AllList.All[i].coordinates.Count - 1);
+                    next = new MyIndex(j + 1, AllList[i].coordinates.Count - 1);
+                    after_next = new MyIndex(j + 2, AllList[i].coordinates.Count - 1);
+                    index_checked = new MyIndex(j + 2, AllList[i].coordinates.Count - 1);
                     //----------------------
-                    Console.WriteLine(" AllCoordinates[" + i + "]: " + AllList.All[i]);
-                    Console.WriteLine(" AllCoordinates[" + i + "].count: " + AllList.All[i].count());
+                    Console.WriteLine(" AllCoordinates[" + i + "]: " + AllList[i]);
+                    Console.WriteLine(" AllCoordinates[" + i + "].count: " + AllList[i].count());
                     //---------------------
                     while (index_checked != j)
                     {
                         //-----------------------
                         Console.WriteLine("j= ({0}), index_checked= ({1})", j, index_checked);
                         Console.WriteLine("check if: {2}, beetwin coordinats: {0}~~{1}",
-                             AllList.All[i].coordinates[j], AllList.All[i].coordinates[next.get()], AllList.All[i].coordinates[index_checked.get()]);
+                             AllList[i].coordinates[j], AllList[i].coordinates[next.get()], AllList[i].coordinates[index_checked.get()]);
                         //---------------------------
-                        if (AllList.All[i].help_fun6_check_if_is_beetwin(AllList.All[i].coordinates[j], AllList.All[i].coordinates[next.get()], index_checked.get()))
+                        if (AllList[i].help_fun6_check_if_is_beetwin(AllList[i].coordinates[j], AllList[i].coordinates[next.get()], index_checked.get()))
                         {
                             //-----------------------
                             Console.ForegroundColor = ConsoleColor.Red;
@@ -505,46 +508,46 @@ namespace WoodcatCalculator
                             before_index_checked = new MyIndex(index_checked);
                             before_index_checked--;
 
-                            c_temp2 = new Coordinates(AllList.All[i].getRange(next.get(), index_checked.get()));
+                            c_temp2 = new Coordinates(AllList[i].getRange(next.get(), index_checked.get()));
 
                             try   // if the coordinate remainder in c_temp is invalid, so delete c_temp
                             {
-                                AllList.All[i].removeRange(after_next.get(), before_index_checked.get());
+                                AllList[i].removeRange(after_next.get(), before_index_checked.get());
                             }
                             catch (Exception e)
                             {     //delete
-                                AllList.All[i].coordinates.RemoveRange(0, AllList.All[i].coordinates.Count);
+                                AllList[i].coordinates.RemoveRange(0, AllList[i].coordinates.Count);
                                 Console.WriteLine(e.StackTrace);
                             }
 
-                            AllList.All.Add(c_temp2);
+                            AllList.Add(c_temp2);
 
                             //---------------------
                             Console.WriteLine(AllList);
                             //----------------------
 
-                            if (!(j < AllList.All[i].coordinates.Count))
+                            if (!(j < AllList[i].coordinates.Count))
                                 break;
-                            next = new MyIndex(j + 1, AllList.All[i].coordinates.Count - 1);
-                            after_next = new MyIndex(j + 2, AllList.All[i].coordinates.Count - 1);
-                            index_checked = new MyIndex(j + 2, AllList.All[i].coordinates.Count - 1);
+                            next = new MyIndex(j + 1, AllList[i].coordinates.Count - 1);
+                            after_next = new MyIndex(j + 2, AllList[i].coordinates.Count - 1);
+                            index_checked = new MyIndex(j + 2, AllList[i].coordinates.Count - 1);
                         }
                         else
                         {
                             Console.WriteLine("--no--");
 
-                            index_checked = new MyIndex(index_checked.get(), AllList.All[i].count() - 1);
+                            index_checked = new MyIndex(index_checked.get(), AllList[i].count() - 1);
                             index_checked++;
                         }
                     }
                 }
-                if (AllList.All[i].coordinates.Count == 0)
+                if (AllList[i].coordinates.Count == 0)
                 {
-                    AllList.All.RemoveAt(i);
+                    AllList.RemoveAt(i);
                     i--;
                 }
             }
-            return AllList.All;
+            return AllList;
         }
 
         OneCoordinate[] help_fun_6_create_sub_array_with_the_new_coordinates(int here_insert, piece p)
@@ -665,7 +668,7 @@ namespace WoodcatCalculator
     }
 
 
-    //class that responsive on indexes
+    //class that responsive on indexes (for all indexes, the smallest value is 0)
     class MyIndex
     {
         int index, max;
