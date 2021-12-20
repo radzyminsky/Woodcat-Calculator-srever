@@ -11,6 +11,7 @@ namespace WoodcatCalculator
     {
         top = 1, down = 2, right = 4, left = 8
     };
+
     class Program
     {
         static void Main(string[] args)
@@ -19,66 +20,152 @@ namespace WoodcatCalculator
             Coordinates C = new Coordinates(
                 new OneCoordinate[]
                 {
-                new OneCoordinate(0, 3),
-               
-                new OneCoordinate(1, 3),
-                new OneCoordinate(1, 0),
-                new OneCoordinate(4, 0),
-                new OneCoordinate(4, 4),
-                new OneCoordinate(2, 4),
-                new OneCoordinate(2,5),
-                new OneCoordinate(0,5),
-                new OneCoordinate(0,5)
-               
-                //new OneCoordinate(0,1),
-                //new OneCoordinate(2,1),
-                //new OneCoordinate(2,0),
-                //new OneCoordinate(6,0),
-                //new OneCoordinate(6,6),
-                //new OneCoordinate(4,6),
-                //new OneCoordinate(4,7),
-                //new OneCoordinate(2,7),
-                //new OneCoordinate(2,6),
-                //new OneCoordinate(1,6),
-                //new OneCoordinate(1,5),
-                //new OneCoordinate(0,5),
-                //new OneCoordinate(0,3),
-                //new OneCoordinate(1,3),
-                //new OneCoordinate(1,2),
-                //new OneCoordinate(0,2),
+                new OneCoordinate(0, 0),
+                new OneCoordinate(5, 0),
+                new OneCoordinate(5, 5),
+                new OneCoordinate(0, 5)
+            
                 });
             Console.WriteLine(C);
 
 
 
-            Console.WriteLine("count: " + C.count());
-            AllCoordinatesList AllCoordinates = new AllCoordinatesList();
+            //Console.WriteLine("count: " + C.count());
+            //CoordinatesList AllCoordinates = new CoordinatesList();
 
-            AllCoordinates.All.AddRange(C.fun6(new piece(3, 1), 6));
-           // AllCoordinates.All.AddRange(C.fun6(new piece(2, 5), 9));
+            //AllCoordinates.All.AddRange(C.fun6(new piece(3, 1), 6));
+            //// AllCoordinates.All.AddRange(C.fun6(new piece(2, 5), 9));
 
-            foreach (var item in AllCoordinates.All)
+            //foreach (var item in AllCoordinates.All)
+            //{
+            //    Console.WriteLine("----------------------new--------------------");
+            //    Console.WriteLine(item);
+            //}
+            List<Coordinates> ll = new List<Coordinates>();
+            ll.Add(new Coordinates(C));
+                Check(ll,0);
+           
+            for (int i = 0; i < pieseAndLoocations.Count; i++)
             {
-                Console.WriteLine("----------------------new--------------------");
-                Console.WriteLine(item);
+                Console.WriteLine(pieseAndLoocations[i]);
             }
+        }
 
+        static piece[] pieses = { new piece(4, 1), new piece(4, 1), new piece(4, 1), new piece(4, 1), new piece(3, 3) };
+        static List<PieseAndLoocation> pieseAndLoocations = new List<PieseAndLoocation>();
 
+        static void Check(List<Coordinates> a, int indexOfPieses)
+        {
+            List<Option> options = createOptionsList(a, pieses[indexOfPieses]);
+
+            if (indexOfPieses == pieses.Length - 1)
+                 pieseAndLoocations.Add( options[0].piese_loocation);
+
+            for (int i = 0; i < options.Count; i++)
+            {
+                Check(options[i].listCoordinates, indexOfPieses + 1);
+                if (pieseAndLoocations.Count>0)
+                    pieseAndLoocations.Add( options[i].piese_loocation);
+            }
+        }
+        static List<Option> createOptionsList(List<Coordinates> coordinatesList,piece p)
+        {
+            List<Option> options = new List<Option>();
+            for (int i = 0; i < coordinatesList.Count; i++)
+            {
+                for (int i1 = 0; i1 < coordinatesList[i].count(); i1++)
+                {
+
+                    for (int j = 0; j < 2; j++)
+                    {
+                        if (j == 0)
+                            p.turn();
+                        if (coordinatesList[i].check_if_is_external(i1) && coordinatesList[i].fun4(p, i1))
+                        {
+                            PieseAndLoocation l = new PieseAndLoocation(coordinatesList[i].coordinates[i1], p);
+                            List<Coordinates> L = coordinatesList[i].fun6(p, i1);
+                            Option O = new Option(l, L);
+
+                            if (options.Count == 0)
+                                options.Add(O);
+
+                            else
+                            {
+                                switch (options[0].sumOfCounts(O))
+                                {
+                                    case 1:
+                                        options.RemoveRange(0, options.Count);
+                                        options.Add(O);
+                                        break;
+                                    case -1:
+                                        break;
+                                    default:
+                                        options.Add(O);
+                                        break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return options;
         }
     }
-    class AllCoordinatesList
+    class PieseAndLoocation
     {
-        public List<Coordinates> All = new List<Coordinates>();
+        public double x;
+        public double y;
+        public bool isVertical;
+        public piece p;
+        public PieseAndLoocation()
+        {
+
+        }
+        public PieseAndLoocation(OneCoordinate oc, piece p_)
+        {
+            x = oc.x;
+            y = oc.y;
+            isVertical = p_.Length < p_.Width;
+            p = p_;
+        }
         public override string ToString()
         {
-            string str = "";
-            for (int i = 0; i < All.Count; i++)
-            {
-                str += i + ": " + All[i] + "\n";
-            }
-            return str;
+            return string.Format("in coordinate ({0},{1}), put piese {2} [vartical?, {3}]",x,y,p,isVertical);
         }
     }
+    class Option
+    {
+        public PieseAndLoocation piese_loocation;
+        public List<Coordinates> listCoordinates;
+        public Option(PieseAndLoocation pl, List<Coordinates> l)
+        {
+            piese_loocation = pl;
+            listCoordinates = l;
+        }
+        //this fun recives another "option" and  checks if its count is larger from "this" or smaller
+        // if is equals, so checks the  sum of all counts in the list ("List<Coordinates> cl")
+        //fun returns -1 if "this" smaller from the "option" parameter, 1 if "this" is larger, 0 if is equals
+        public int sumOfCounts(Option o)
+        {
+            if (listCoordinates.Count < o.listCoordinates.Count)
+                return -1;
+            if (listCoordinates.Count > o.listCoordinates.Count)
+                return 1;
+            int sum1, sum2;
+            sum1 = sum2 = 0;
+            for (int i = 0; i < listCoordinates.Count; i++)
+            {
+                sum1 += listCoordinates[i].coordinates.Count;
+                sum2 += o.listCoordinates[i].coordinates.Count;
+            }
+            if (sum1 < sum2)
+                return -1;
+            if (sum1 > sum2)
+                return 1;
+            return 0;
+        }
+    }
+   
     class OneCoordinate
     {
         public double x;
@@ -250,7 +337,7 @@ namespace WoodcatCalculator
             return temp;
 
         }
-        
+
         //this function return an index of given coordinate
         //the function uses at "FindIndex" function of "List" that gets a delegate
         public int findIndex(OneCoordinate c)
@@ -451,7 +538,7 @@ namespace WoodcatCalculator
         {
             List<Coordinates> AllList = new List<Coordinates>();
 
-         //   AllCoordinatesList AllList = new AllCoordinatesList();
+            //   AllCoordinatesList AllList = new AllCoordinatesList();
 
             Coordinates c_temp, c_temp2;
             OneCoordinate[] c = help_fun_6_create_sub_array_with_the_new_coordinates(here_insert, p);
@@ -648,6 +735,19 @@ namespace WoodcatCalculator
                 Width = width;
             }
         }
+        public piece(piece p)
+        {
+            Length = p.Length;
+            Width = p.Width;
+        }
+        public void turn()
+        {
+            double temp = Length;
+            Length = Width;
+            Width = temp;
+
+        }
+
         public override string ToString()
         {
             return "(" + Length + " x " + Width + ")";
