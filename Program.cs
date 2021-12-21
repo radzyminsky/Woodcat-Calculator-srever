@@ -16,7 +16,9 @@ namespace WoodcatCalculator
     {
         static void Main(string[] args)
         {
-
+            //------------------------------
+            DateTime start = DateTime.Now;
+            //-----------------------------------
             Coordinates C = new Coordinates(
                 new OneCoordinate[]
                 {
@@ -30,42 +32,50 @@ namespace WoodcatCalculator
 
 
 
-            //Console.WriteLine("count: " + C.count());
-            //CoordinatesList AllCoordinates = new CoordinatesList();
-
-            //AllCoordinates.All.AddRange(C.fun6(new piece(3, 1), 6));
-            //// AllCoordinates.All.AddRange(C.fun6(new piece(2, 5), 9));
-
-            //foreach (var item in AllCoordinates.All)
-            //{
-            //    Console.WriteLine("----------------------new--------------------");
-            //    Console.WriteLine(item);
-            //}
             List<Coordinates> ll = new List<Coordinates>();
             ll.Add(new Coordinates(C));
                 Check(ll,0);
            
-            for (int i = 0; i < pieseAndLoocations.Count; i++)
+            for (int i = pieseAndLocations.Count-1; i >-1; i--)
             {
-                Console.WriteLine(pieseAndLoocations[i]);
+                Console.WriteLine(pieseAndLocations[i]);
             }
+            //------------------------------
+            DateTime end = DateTime.Now;
+
+            Console.WriteLine("\n\n\n");
+            Console.WriteLine(end - start);
+            //-----------------------------------
         }
 
         static piece[] pieses = { new piece(4, 1), new piece(4, 1), new piece(4, 1), new piece(4, 1), new piece(3, 3) };
-        static List<PieseAndLoocation> pieseAndLoocations = new List<PieseAndLoocation>();
+        static List<PieseAndLocation> pieseAndLocations = new List<PieseAndLocation>();
 
         static void Check(List<Coordinates> a, int indexOfPieses)
         {
             List<Option> options = createOptionsList(a, pieses[indexOfPieses]);
 
-            if (indexOfPieses == pieses.Length - 1)
-                 pieseAndLoocations.Add( options[0].piese_loocation);
+            //-----------------------
+            Console.ForegroundColor = ConsoleColor.DarkYellow;
+            Console.WriteLine("\n\n\n-----------------------------------------------\n\n\n");
+            Console.WriteLine("--check--"+indexOfPieses);
+            Console.WriteLine("\n\n\n-----------------------------------------------\n\n\n");
+            Console.ForegroundColor = ConsoleColor.White;
+            //-----------------------
 
             for (int i = 0; i < options.Count; i++)
             {
+                if (indexOfPieses == pieses.Length - 1)//that is we complete cut all pieses, so we finished to caculate
+                {
+                    pieseAndLocations.Add(options[0].piese_loocation);
+                    return;
+                }
                 Check(options[i].listCoordinates, indexOfPieses + 1);
-                if (pieseAndLoocations.Count>0)
-                    pieseAndLoocations.Add( options[i].piese_loocation);
+                if (pieseAndLocations.Count > 0)
+                {
+                    pieseAndLocations.Add(options[i].piese_loocation);
+                    return;
+                }
             }
         }
         static List<Option> createOptionsList(List<Coordinates> coordinatesList,piece p)
@@ -73,18 +83,18 @@ namespace WoodcatCalculator
             List<Option> options = new List<Option>();
             for (int i = 0; i < coordinatesList.Count; i++)
             {
-                for (int i1 = 0; i1 < coordinatesList[i].count(); i1++)
+                for (int i2 = 0; i2 < coordinatesList[i].count(); i2++)
                 {
 
                     for (int j = 0; j < 2; j++)
                     {
                         if (j == 0)
                             p.turn();
-                        if (coordinatesList[i].check_if_is_external(i1) && coordinatesList[i].fun4(p, i1))
+                        if (coordinatesList[i].check_if_is_external(i2) && coordinatesList[i].fun4(p, i2))
                         {
-                            PieseAndLoocation l = new PieseAndLoocation(coordinatesList[i].coordinates[i1], p);
-                            List<Coordinates> L = coordinatesList[i].fun6(p, i1);
-                            Option O = new Option(l, L);
+                            PieseAndLocation pl = new PieseAndLocation(coordinatesList[i].coordinates[i2], p);
+                            List<Coordinates> L = coordinatesList[i].fun6(p, i2);
+                            Option O = new Option(pl, L);
 
                             if (options.Count == 0)
                                 options.Add(O);
@@ -99,9 +109,11 @@ namespace WoodcatCalculator
                                         break;
                                     case -1:
                                         break;
-                                    default:
+                                    case 0:
                                         options.Add(O);
                                         break;
+                                    default:
+                                        throw new Exception("you arrived to defolt switch ");
                                 }
                             }
                         }
@@ -111,17 +123,17 @@ namespace WoodcatCalculator
             return options;
         }
     }
-    class PieseAndLoocation
+    class PieseAndLocation
     {
         public double x;
         public double y;
         public bool isVertical;
         public piece p;
-        public PieseAndLoocation()
+        public PieseAndLocation()
         {
 
         }
-        public PieseAndLoocation(OneCoordinate oc, piece p_)
+        public PieseAndLocation(OneCoordinate oc, piece p_)
         {
             x = oc.x;
             y = oc.y;
@@ -135,9 +147,9 @@ namespace WoodcatCalculator
     }
     class Option
     {
-        public PieseAndLoocation piese_loocation;
+        public PieseAndLocation piese_loocation;
         public List<Coordinates> listCoordinates;
-        public Option(PieseAndLoocation pl, List<Coordinates> l)
+        public Option(PieseAndLocation pl, List<Coordinates> l)
         {
             piese_loocation = pl;
             listCoordinates = l;
@@ -461,43 +473,38 @@ namespace WoodcatCalculator
                 , new OneCoordinate(x_left, y_down), new OneCoordinate(x_right, y_down), new OneCoordinate(x_right, y_top),
                 new OneCoordinate(x_left, y_top), coordinates[index_of_coord]);
 
-            int current = index_of_coord + 1;
-            int next;
+            MyIndex current = new MyIndex(index_of_coord + 1, coordinates.Count - 1);
+            MyIndex next;
 
             while (current != index_of_coord)
             {
-                if (coordinates[current].type == types.left || coordinates[current].type == types.right)
+                if (coordinates[current.get()].type == types.left || coordinates[current.get()].type == types.right)
                 {
-                    if (coordinates[current].y < y_top && coordinates[current].y > y_down)
+                    if (coordinates[current.get()].y < y_top && coordinates[current.get()].y > y_down)
                     {
-                        next = current + 1;
-                        if ((coordinates[current].x >= x_right && coordinates[next].x < x_right) || (coordinates[current].x <= x_left && coordinates[next].x > x_left))
+                        next = new MyIndex(current.get() + 1, coordinates.Count - 1);
+                        if ((coordinates[current.get()].x >= x_right && coordinates[next.get()].x < x_right) || (coordinates[current.get()].x <= x_left && coordinates[next.get()].x > x_left))
                             return false;
-                        help_fun4_Increase_current(ref current);
+                        current++;
                     }
                 }
                 else
                 {
-                    if (coordinates[current].x < x_right && coordinates[current].x > x_left)
+                    if (coordinates[current.get()].x < x_right && coordinates[current.get()].x > x_left)
                     {
-                        next = current + 1;
-                        if ((coordinates[current].y >= y_top && coordinates[next].y < y_top) || (coordinates[current].y <= y_down && coordinates[next].y > y_down))
+                        next = new MyIndex(current.get() + 1, coordinates.Count - 1);
+                        if ((coordinates[current.get()].y >= y_top && coordinates[next.get()].y < y_top) || (coordinates[current.get()].y <= y_down && coordinates[next.get()].y > y_down))
                             return false;
-                        help_fun4_Increase_current(ref current);
+                        current++;
                     }
                 }
-                help_fun4_Increase_current(ref current);
+                current++;
             }
 
             return true;
         }
 
-        void help_fun4_Increase_current(ref int curr)
-        {
-            curr++;
-            if (curr >= coordinates.Count)
-                curr = 0;
-        }
+     
         void help_fun4_init_values(out double x_right, out double x_left, out double y_top, out double y_down, int index_of_coord, piece p)
         {
             OneCoordinate c = coordinates[index_of_coord];
