@@ -26,7 +26,7 @@ namespace WoodcatCalculator
                 new OneCoordinate(5, 0),
                 new OneCoordinate(5, 5),
                 new OneCoordinate(0, 5)
-            
+
                 });
             Console.WriteLine(C);
 
@@ -34,9 +34,14 @@ namespace WoodcatCalculator
 
             List<Coordinates> ll = new List<Coordinates>();
             ll.Add(new Coordinates(C));
-                Check1(ll,0);
-           
-            for (int i = pieseAndLocationS.Count-1; i >-1; i--)
+            pieses.Sort();
+            foreach (piece item in pieses)
+            {
+                Console.WriteLine(item);
+            }
+            Check(ll, 0);
+
+            for (int i = pieseAndLocationS.Count - 1; i > -1; i--)
             {
                 Console.WriteLine(pieseAndLocationS[i]);
             }
@@ -47,35 +52,36 @@ namespace WoodcatCalculator
             //-----------------------------------
 
         }
-        static piece[] pieses1 = { new piece(4, 1), new piece(4, 1), new piece(4, 1), new piece(4, 1), new piece(3, 3) };
+        // static piece[]
+        static List<piece> pieses = new List<piece>(new piece[] { new piece(3, 3), new piece(3.5, 1), new piece(3.5, 1), new piece(3.5, 1), new piece(3.5, 1) });
 
-        static piece[] pieses = { new piece(5, 1), new piece(5, 1), new piece(5, 1), new piece(5, 1), new piece(5, 1) };
+        // static piece[] pieses = { new piece(5, 1), new piece(5, 1), new piece(5, 1), new piece(5, 1), new piece(5, 1) };
         static List<PieseAndLocation> pieseAndLocationS = new List<PieseAndLocation>();
 
 
-        //---------------------------------------
-        static void Check1(List<Coordinates> coordList, int indexOfPieses)
-        {
-            List<Option> options = createOptionsList(coordList, pieses1[indexOfPieses]);
+        ////---------------------------------------
+        //static void Check1(List<Coordinates> coordList, int indexOfPieses)
+        //{
+        //    List<Option> options = createOptionsList(coordList, pieses1[indexOfPieses]);
 
-            for (int i = 0; i < options.Count; i++)
-            {
-                if (indexOfPieses == pieses1.Length - 1)//that is we complete cut all pieses, so we finished to caculate
-                {
-                    pieseAndLocationS.Add(options[0].piese_loocation);
-                    return;
-                }
+        //    for (int i = 0; i < options.Count; i++)
+        //    {
+        //        if (indexOfPieses == pieses1.Length - 1)//that is we complete cut all pieses, so we finished to caculate
+        //        {
+        //            pieseAndLocationS.Add(options[0].piese_loocation);
+        //            return;
+        //        }
 
-                //requrse call
-                Check1(options[i].listCoordinates, indexOfPieses + 1);
-                if (pieseAndLocationS.Count > 0)
-                {
-                    pieseAndLocationS.Add(options[i].piese_loocation);
-                    return;
-                }
-            }
-        }
-        //------------------------------------
+        //        //requrse call
+        //        Check1(options[i].listCoordinates, indexOfPieses + 1);
+        //        if (pieseAndLocationS.Count > 0)
+        //        {
+        //            pieseAndLocationS.Add(options[i].piese_loocation);
+        //            return;
+        //        }
+        //    }
+        //}
+        ////------------------------------------
 
 
         static void Check(List<Coordinates> coordList, int indexOfPieses)
@@ -84,7 +90,7 @@ namespace WoodcatCalculator
 
             for (int i = 0; i < options.Count; i++)
             {
-                if (indexOfPieses == pieses.Length - 1)//that is we complete cut all pieses, so we finished to caculate
+                if (indexOfPieses == pieses.Count - 1)//that is we complete cut all pieses, so we finished to caculate
                 {
                     pieseAndLocationS.Add(options[0].piese_loocation);
                     return;
@@ -102,7 +108,7 @@ namespace WoodcatCalculator
 
         //this function gets 'List<Coordinates>' and 'piece',
         //then return 'List<Option>' that contains the all best of option for catting the piese was given
-        static List<Option> createOptionsList(List<Coordinates> coordinatesList,piece p)
+        static List<Option> createOptionsList(List<Coordinates> coordinatesList, piece p)
         {
             List<Option> options = new List<Option>();
             for (int i = 0; i < coordinatesList.Count; i++)
@@ -119,29 +125,31 @@ namespace WoodcatCalculator
                             PieseAndLocation pisLocat = new PieseAndLocation(coordinatesList[i].coordinates[i2], new piece(p));
                             List<Coordinates> coordList = coordinatesList[i].fun6(p, i2);
                             Option option = new Option(pisLocat, coordList);
-                            //---------------------------
-                            Console.WriteLine(option);
-                            //-----------------------------
-                            if (options.Count == 0)
-                                options.Add(option);
+                            ////---------------------------
+                            //Console.WriteLine(option);
+                            ////-----------------------------
+                            // if (options.Count == 0)
 
-                            else
-                            {
-                                switch (options[0].sumOfCounts(option))
-                                {
-                                    case 1:
-                                        options.RemoveRange(0, options.Count);
-                                        options.Add(option);
-                                        break;
-                                    case -1:
-                                        break;
-                                    case 0:
-                                        options.Add(option);
-                                        break;
-                                    default:
-                                        throw new Exception("you arrived to defolt switch ");
-                                }
-                            }
+
+                            options.Add(option);
+
+                            //else
+                            //{
+                            //    switch (options[0].sumOfCounts(option))
+                            //    {
+                            //        case 1:
+                            //            options.RemoveRange(0, options.Count);
+                            //            options.Add(option);
+                            //            break;
+                            //        case -1:
+                            //            break;
+                            //        case 0:
+                            //            options.Add(option);
+                            //            break;
+                            //        default:
+                            //            throw new Exception("you arrived to defolt switch ");
+                            //    }
+                            //}
                         }
                         //Console.ForegroundColor = ConsoleColor.DarkYellow;
                         //Console.WriteLine("\n-----------------------------");
@@ -156,6 +164,7 @@ namespace WoodcatCalculator
                     }
                 }
             }
+            options.Sort();
             return options;
         }
     }
@@ -176,13 +185,13 @@ namespace WoodcatCalculator
             isVertical = p_.Length >= p_.Width;
             p = p_;
         }
-        
+
         public override string ToString()
         {
-            return string.Format("in coordinate ({0},{1}), put piese {2} [vartical?, {3}]",x,y,p,isVertical);
+            return string.Format("in coordinate ({0},{1}), put piese {2} [vartical?, {3}]", x, y, p, isVertical);
         }
     }
-    class Option
+    class Option : IComparable<Option>
     {
         public PieseAndLocation piese_loocation;
         public List<Coordinates> listCoordinates;
@@ -191,6 +200,12 @@ namespace WoodcatCalculator
             piese_loocation = pl;
             listCoordinates = l;
         }
+
+        public int CompareTo(Option other)
+        {
+            return sumOfCounts(other);
+        }
+
         //this fun recives another "option" and  checks if its count is larger from "this" or smaller
         // if is equals, so checks the  sum of all counts in the list ("List<Coordinates> cl")
         //fun returns -1 if "this" smaller from the "option" parameter, 1 if "this" is larger, 0 if is equals
@@ -221,11 +236,11 @@ namespace WoodcatCalculator
             {
                 str += listCoordinates[i] + "\n";
             }
-            return "piese_loocation:  "+piese_loocation+" \nlistCoordinates:  " + str;
+            return "piese_loocation:  " + piese_loocation + " \nlistCoordinates:  " + str;
         }
         //-------------------------------------
     }
-   
+
     class OneCoordinate
     {
         public double x;
@@ -324,7 +339,7 @@ namespace WoodcatCalculator
         public void insertRange(int index, OneCoordinate[] arr)
         {
             coordinates.InsertRange(index, arr);
-    
+
             UpdateTypeAndRemoveUnnecessaryCoordinate();
 
             if (checkIsInvalid())
@@ -483,8 +498,8 @@ namespace WoodcatCalculator
         }
 
         //"fun4" get a given piece and index, then it checks if can cat this piece from the array at the index given,
-        //"fun4" uses in tow functions "help_fun4_Increase_current" and "help_fun4_Increase_current",
-        //the first of which initializes values, the second, increas the index every iteration
+        //"fun4" uses at one function "help_fun4_init_values"  which initializes values,
+        //also uses at class "myIndex" for some indexes.
         public bool fun4(piece p, int index_of_coord)
         {
             double x_right, x_left, y_top, y_down;
@@ -522,7 +537,7 @@ namespace WoodcatCalculator
             return true;
         }
 
-     
+
         void help_fun4_init_values(out double x_right, out double x_left, out double y_top, out double y_down, int index_of_coord, piece p)
         {
             OneCoordinate c = coordinates[index_of_coord];
