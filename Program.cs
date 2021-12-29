@@ -53,7 +53,7 @@ namespace WoodcatCalculator
 
         }
         // static piece[]
-        static List<piece> pieses = new List<piece>(new piece[] { new piece(3, 3), new piece(3.5, 1), new piece(3.5, 1), new piece(3.5, 1), new piece(3.5, 1) });
+        static List<piece> pieses = new List<piece>(new piece[] { new piece(3, 3), new piece(3.7, 1), new piece(3.7, 1), new piece(3.7, 1), new piece(3.7, 1) });
 
         // static piece[] pieses = { new piece(5, 1), new piece(5, 1), new piece(5, 1), new piece(5, 1), new piece(5, 1) };
         static List<PieseAndLocation> pieseAndLocationS = new List<PieseAndLocation>();
@@ -107,7 +107,9 @@ namespace WoodcatCalculator
         }
 
         //this function gets 'List<Coordinates>' and 'piece',
-        //then return 'List<Option>' that contains the all best of option for catting the piese was given
+        //then return 'List<Option>'for catting the piese was given,
+        //that contains the all options, and sorts them order best to worst,
+        //(the best option is it that has min "cordinates[]" and for each  (cordinates[]) it has min coordinates)
         static List<Option> createOptionsList(List<Coordinates> coordinatesList, piece p)
         {
             List<Option> options = new List<Option>();
@@ -115,7 +117,6 @@ namespace WoodcatCalculator
             {
                 for (int i2 = 0; i2 < coordinatesList[i].count(); i2++)
                 {
-
                     for (int j = 0; j < 2; j++)
                     {
                         if (j == 1)
@@ -125,42 +126,8 @@ namespace WoodcatCalculator
                             PieseAndLocation pisLocat = new PieseAndLocation(coordinatesList[i].coordinates[i2], new piece(p));
                             List<Coordinates> coordList = coordinatesList[i].fun6(p, i2);
                             Option option = new Option(pisLocat, coordList);
-                            ////---------------------------
-                            //Console.WriteLine(option);
-                            ////-----------------------------
-                            // if (options.Count == 0)
-
-
                             options.Add(option);
-
-                            //else
-                            //{
-                            //    switch (options[0].sumOfCounts(option))
-                            //    {
-                            //        case 1:
-                            //            options.RemoveRange(0, options.Count);
-                            //            options.Add(option);
-                            //            break;
-                            //        case -1:
-                            //            break;
-                            //        case 0:
-                            //            options.Add(option);
-                            //            break;
-                            //        default:
-                            //            throw new Exception("you arrived to defolt switch ");
-                            //    }
-                            //}
                         }
-                        //Console.ForegroundColor = ConsoleColor.DarkYellow;
-                        //Console.WriteLine("\n-----------------------------");
-                        //for (int i3 = 0; i3 < options.Count; i3++)
-                        //{
-                        //    Console.WriteLine(options[i3].piese_loocation);
-
-                        //}
-                        //Console.WriteLine();
-                        //Console.ForegroundColor = ConsoleColor.DarkYellow+2;
-
                     }
                 }
             }
@@ -497,7 +464,7 @@ namespace WoodcatCalculator
             return true;
         }
 
-        //"fun4" get a given piece and index, then it checks if can cat this piece from the array at the index given,
+        //"fun4" get a given piece and index, then it checks if it can cat this piece from the array at the index given,
         //"fun4" uses at one function "help_fun4_init_values"  which initializes values,
         //also uses at class "myIndex" for some indexes.
         public bool fun4(piece p, int index_of_coord)
@@ -588,16 +555,12 @@ namespace WoodcatCalculator
             //i use in "insertRang" function, not "InsertRange", because i need it to play some functions...
             c_temp.insertRange(here_insert, c);
 
-
-
             AllList.Add(c_temp);
 
             for (int i = 0; i < AllList.Count; i++)
             {
 
-
                 MyIndex next, after_next, index_checked, before_index_checked;
-
 
                 for (int j = 0; j < AllList[i].coordinates.Count; j++)
                 {
