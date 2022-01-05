@@ -54,7 +54,7 @@ namespace WoodcatCalculator
 
         }
         // static piece[]
-        static List<piece> pieses = new List<piece>(new piece[] { new piece(3, 3), new piece(3.7, 1), new piece(3.7, 1), new piece(3.7, 1), new piece(3.7, 1) });
+        static List<piece> pieses = new List<piece>(new piece[] { new piece(3, 3), new piece(3.5, 0.5), new piece(3.5, 0.5), new piece(3.5, 0.5), new piece(3.5, 0.5) });
 
         // static piece[] pieses = { new piece(5, 1), new piece(5, 1), new piece(5, 1), new piece(5, 1), new piece(5, 1) };
         static List<PieseAndLocation> pieseAndLocationS = new List<PieseAndLocation>();
@@ -809,8 +809,11 @@ namespace WoodcatCalculator
                                     new OneCoordinate(coordinates[i].x,mostDown),
                                     new OneCoordinate(mostLeft,mostDown),
                                     new OneCoordinate(mostLeft,coordinates[i].y)
-                                });
-                    coordinates.RemoveRange(i, 1);
+                                }); 
+                    if (next == 0)
+                        coordinates.RemoveAt(coordinates.Count - 1);
+                    else
+                        coordinates.RemoveAt(i);
                     i += 2;
                 }
                 //@{
@@ -819,8 +822,10 @@ namespace WoodcatCalculator
                     coordinates.InsertRange(next, new OneCoordinate[] {
                                     new OneCoordinate(coordinates[i].x,mostDown),
                                     new OneCoordinate(mostLeft,mostDown)
-                                });
-                    coordinates.RemoveRange(i, 1);
+                                }); if (next == 0)
+                        coordinates.RemoveAt(coordinates.Count - 1);
+                    else
+                        coordinates.RemoveAt(i);
                     i += 1;
                 }
                 //@}
@@ -830,8 +835,11 @@ namespace WoodcatCalculator
                                     new OneCoordinate(coordinates[i].x,mostDown),
                                     new OneCoordinate(mostRight,mostDown),
                                     new OneCoordinate(mostRight,coordinates[i].y)
-                                });
-                    coordinates.RemoveRange(i, 1);
+                                }); 
+                    if (next == 0)
+                        coordinates.RemoveAt(coordinates.Count - 1);
+                    else
+                        coordinates.RemoveAt(i);
                     i += 2;
                 }
                 //@{
@@ -841,7 +849,10 @@ namespace WoodcatCalculator
                                     new OneCoordinate(coordinates[i].x,mostDown),
                                     new OneCoordinate(mostRight,mostDown)
                                 });
-                    coordinates.RemoveRange(i, 1);
+                    if (next == 0)
+                        coordinates.RemoveAt(coordinates.Count - 1);
+                    else
+                        coordinates.RemoveAt(i);
                     i += 1;
                 }
                 //@}
@@ -924,8 +935,11 @@ namespace WoodcatCalculator
                                     new OneCoordinate(coordinates[i].x,mostTop),
                                     new OneCoordinate(mostLeft,mostTop),
                                     new OneCoordinate(mostLeft,coordinates[i].y)
-                                });
-                    coordinates.RemoveRange(i, 1);
+                                }); 
+                    if (next == 0)
+                        coordinates.RemoveAt(coordinates.Count - 1);
+                    else
+                        coordinates.RemoveAt(i);
                     i += 2;
                 }
                 //@{
@@ -935,8 +949,11 @@ namespace WoodcatCalculator
                                     new OneCoordinate(coordinates[i].x,mostTop),
                                     new OneCoordinate(mostLeft,mostTop)
                                 });
-                    coordinates.RemoveRange(i, 1);
-                    i += 1;
+
+                    if (next == 0)
+                        coordinates.RemoveAt(coordinates.Count - 1);
+                    else
+                        coordinates.RemoveAt(i); i += 1;
                 }
                 //@}
                 else if (coordinates[next].x >= mostRight)
@@ -946,7 +963,10 @@ namespace WoodcatCalculator
                                     new OneCoordinate(mostRight,mostTop),
                                     new OneCoordinate(mostRight,coordinates[i].y)
                                 });
-                    coordinates.RemoveRange(i, 1);
+                    if (next == 0)
+                        coordinates.RemoveAt(coordinates.Count - 1);
+                    else
+                        coordinates.RemoveAt(i);
                     i += 2;
                 }
                 //@{
@@ -956,7 +976,10 @@ namespace WoodcatCalculator
                                     new OneCoordinate(coordinates[i].x,mostTop),
                                     new OneCoordinate(mostRight,mostTop)
                                 });
-                    coordinates.RemoveRange(i, 1);
+                    if (next == 0)
+                        coordinates.RemoveAt(coordinates.Count - 1);
+                    else
+                        coordinates.RemoveAt(i);
                     i += 1;
                 }
                 //@}
@@ -1040,7 +1063,10 @@ namespace WoodcatCalculator
                                     new OneCoordinate(mostLeft,mostDown),
                                     new OneCoordinate(coordinates[i].x,mostDown)
                                 });
-                    coordinates.RemoveRange(i, 1);
+                    if (next == 0)
+                        coordinates.RemoveAt(coordinates.Count - 1);
+                    else
+                        coordinates.RemoveAt(i);
                     i += 2;
                 }
                 //@{
@@ -1050,7 +1076,10 @@ namespace WoodcatCalculator
                                     new OneCoordinate(mostLeft,coordinates[i].y),
                                     new OneCoordinate(mostLeft,mostDown)
                                 });
-                    coordinates.RemoveRange(i, 1);
+                    if (next == 0)
+                        coordinates.RemoveAt(coordinates.Count - 1);
+                    else
+                        coordinates.RemoveAt(i);
                     i += 1;
                 }
                 //@}
@@ -1061,7 +1090,10 @@ namespace WoodcatCalculator
                                     new OneCoordinate(mostLeft,mostTop),
                                     new OneCoordinate(coordinates[i].x,mostTop)
                                 });
-                    coordinates.RemoveRange(i, 1);
+                    if (next == 0)
+                        coordinates.RemoveAt(coordinates.Count - 1);
+                    else
+                        coordinates.RemoveAt(i);
                     i += 2;
                 }
                 //@{
@@ -1071,7 +1103,10 @@ namespace WoodcatCalculator
                                     new OneCoordinate(mostLeft,coordinates[i].y),
                                     new OneCoordinate(mostLeft,mostTop)
                                 });
-                    coordinates.RemoveRange(i, 1);
+                    if (next == 0)
+                        coordinates.RemoveAt(coordinates.Count - 1);
+                    else
+                        coordinates.RemoveAt(i);
                     i += 1;
                 }
                 //@}
@@ -1155,7 +1190,10 @@ namespace WoodcatCalculator
                                     new OneCoordinate(mostRight,mostDown),
                                     new OneCoordinate(coordinates[i].x,mostDown)
                                 });
-                    coordinates.RemoveRange(i, 1);
+                    if (next == 0)
+                        coordinates.RemoveAt(coordinates.Count - 1);
+                    else
+                        coordinates.RemoveAt(i);
                     i += 2;
                 }
                 //@{
@@ -1165,7 +1203,10 @@ namespace WoodcatCalculator
                                     new OneCoordinate(mostRight,coordinates[i].y),
                                     new OneCoordinate(mostRight,mostDown)
                                 });
-                    coordinates.RemoveRange(i, 1);
+                    if (next == 0)
+                        coordinates.RemoveAt(coordinates.Count - 1);
+                    else
+                        coordinates.RemoveAt(i);
                     i += 1;
                 }
                 //@}
@@ -1176,7 +1217,10 @@ namespace WoodcatCalculator
                                     new OneCoordinate(mostRight,mostTop),
                                     new OneCoordinate(coordinates[i].x,mostTop)
                                 });
-                    coordinates.RemoveRange(i, 1);
+                    if (next == 0)
+                        coordinates.RemoveAt(coordinates.Count - 1);
+                    else
+                        coordinates.RemoveAt(i);
                     i += 2;
                 }
                 //@{
@@ -1186,7 +1230,10 @@ namespace WoodcatCalculator
                                     new OneCoordinate(mostRight,coordinates[i].y),
                                     new OneCoordinate(mostRight,mostTop)
                                 });
-                    coordinates.RemoveRange(i, 1);
+                    if (next == 0)
+                        coordinates.RemoveAt(coordinates.Count - 1);
+                    else
+                        coordinates.RemoveAt(i);
                     i += 1;
                 }
                 //@}
