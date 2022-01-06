@@ -805,69 +805,54 @@ namespace WoodcatCalculator
             {
                 if (coordinates[next].x <= mostLeft)
                 {
-                    coordinates[i].y = mostDown;
                     coordinates.InsertRange(next, new OneCoordinate[] {
+                                    new OneCoordinate(coordinates[i].x,mostDown),
                                     new OneCoordinate(mostLeft,mostDown),
                                     new OneCoordinate(mostLeft,coordinates[i].y)
-<<<<<<< HEAD
-                                });
-=======
                                 }); 
                     if (next == 0)
                         coordinates.RemoveAt(coordinates.Count - 1);
                     else
                         coordinates.RemoveAt(i);
->>>>>>> somebranch
                     i += 2;
                 }
                 //@{
                 else if (coordinates[next].x<=left_right)
                 {
-                    coordinates[i].y = mostDown;
                     coordinates.InsertRange(next, new OneCoordinate[] {
+                                    new OneCoordinate(coordinates[i].x,mostDown),
                                     new OneCoordinate(mostLeft,mostDown)
-<<<<<<< HEAD
-                                });
-=======
                                 }); if (next == 0)
                         coordinates.RemoveAt(coordinates.Count - 1);
                     else
                         coordinates.RemoveAt(i);
->>>>>>> somebranch
                     i += 1;
                 }
                 //@}
                 else if (coordinates[next].x >= mostRight)
                 {
-                    coordinates[i].y = mostDown;
                     coordinates.InsertRange(next, new OneCoordinate[] {
+                                    new OneCoordinate(coordinates[i].x,mostDown),
                                     new OneCoordinate(mostRight,mostDown),
                                     new OneCoordinate(mostRight,coordinates[i].y)
-<<<<<<< HEAD
-                                });
-=======
                                 }); 
                     if (next == 0)
                         coordinates.RemoveAt(coordinates.Count - 1);
                     else
                         coordinates.RemoveAt(i);
->>>>>>> somebranch
                     i += 2;
                 }
                 //@{
                 else if (coordinates[next].x >= right_left)
                 {
-                    coordinates[i].y = mostDown;
                     coordinates.InsertRange(next, new OneCoordinate[] {
+                                    new OneCoordinate(coordinates[i].x,mostDown),
                                     new OneCoordinate(mostRight,mostDown)
                                 });
-<<<<<<< HEAD
-=======
                     if (next == 0)
                         coordinates.RemoveAt(coordinates.Count - 1);
                     else
                         coordinates.RemoveAt(i);
->>>>>>> somebranch
                     i += 1;
                 }
                 //@}
@@ -946,69 +931,55 @@ namespace WoodcatCalculator
             {
                 if (coordinates[next].x <= mostLeft)
                 {
-                    coordinates[i].y = mostTop;
                     coordinates.InsertRange(next, new OneCoordinate[] {
+                                    new OneCoordinate(coordinates[i].x,mostTop),
                                     new OneCoordinate(mostLeft,mostTop),
                                     new OneCoordinate(mostLeft,coordinates[i].y)
-<<<<<<< HEAD
-                                });
-=======
                                 }); 
                     if (next == 0)
                         coordinates.RemoveAt(coordinates.Count - 1);
                     else
                         coordinates.RemoveAt(i);
->>>>>>> somebranch
                     i += 2;
                 }
                 //@{
                 else if (coordinates[next].x<=left_right)
                 {
-                    coordinates[i].y = mostTop;
                     coordinates.InsertRange(next, new OneCoordinate[] {
+                                    new OneCoordinate(coordinates[i].x,mostTop),
                                     new OneCoordinate(mostLeft,mostTop)
                                 });
-<<<<<<< HEAD
-                    i += 1;
-=======
 
                     if (next == 0)
                         coordinates.RemoveAt(coordinates.Count - 1);
                     else
                         coordinates.RemoveAt(i); i += 1;
->>>>>>> somebranch
                 }
                 //@}
                 else if (coordinates[next].x >= mostRight)
                 {
-                    coordinates[i].y = mostTop;
                     coordinates.InsertRange(next, new OneCoordinate[] {
+                                    new OneCoordinate(coordinates[i].x,mostTop),
                                     new OneCoordinate(mostRight,mostTop),
                                     new OneCoordinate(mostRight,coordinates[i].y)
                                 });
-<<<<<<< HEAD
-=======
                     if (next == 0)
                         coordinates.RemoveAt(coordinates.Count - 1);
                     else
                         coordinates.RemoveAt(i);
->>>>>>> somebranch
                     i += 2;
                 }
                 //@{
                 else if (coordinates [next].x>=right_left)
                 {
-                    coordinates[i].y = mostTop;
                     coordinates.InsertRange(next, new OneCoordinate[] {
+                                    new OneCoordinate(coordinates[i].x,mostTop),
                                     new OneCoordinate(mostRight,mostTop)
                                 });
-<<<<<<< HEAD
-=======
                     if (next == 0)
                         coordinates.RemoveAt(coordinates.Count - 1);
                     else
                         coordinates.RemoveAt(i);
->>>>>>> somebranch
                     i += 1;
                 }
                 //@}
@@ -1087,67 +1058,55 @@ namespace WoodcatCalculator
             {
                 if (coordinates[next].y <= mostDown)
                 {
-                    coordinates[i].x = mostLeft;
                     coordinates.InsertRange(next, new OneCoordinate[] {
+                                    new OneCoordinate(mostLeft,coordinates[i].y),
                                     new OneCoordinate(mostLeft,mostDown),
                                     new OneCoordinate(coordinates[i].x,mostDown)
                                 });
-<<<<<<< HEAD
-=======
                     if (next == 0)
                         coordinates.RemoveAt(coordinates.Count - 1);
                     else
                         coordinates.RemoveAt(i);
->>>>>>> somebranch
                     i += 2;
                 }
                 //@{
                 else if (coordinates[next].y<=down_top)
                 {
-                    coordinates[i].x = mostLeft;
                     coordinates.InsertRange(next, new OneCoordinate[] {
+                                    new OneCoordinate(mostLeft,coordinates[i].y),
                                     new OneCoordinate(mostLeft,mostDown)
                                 });
-<<<<<<< HEAD
-=======
                     if (next == 0)
                         coordinates.RemoveAt(coordinates.Count - 1);
                     else
                         coordinates.RemoveAt(i);
->>>>>>> somebranch
                     i += 1;
                 }
                 //@}
                 else if (coordinates[next].y >= mostTop)
                 {
-                    coordinates[i].x = mostLeft;
                     coordinates.InsertRange(next, new OneCoordinate[] {
+                                    new OneCoordinate(mostLeft,coordinates[i].y),
                                     new OneCoordinate(mostLeft,mostTop),
                                     new OneCoordinate(coordinates[i].x,mostTop)
                                 });
-<<<<<<< HEAD
-=======
                     if (next == 0)
                         coordinates.RemoveAt(coordinates.Count - 1);
                     else
                         coordinates.RemoveAt(i);
->>>>>>> somebranch
                     i += 2;
                 }
                 //@{
                 else if (coordinates[next].y>=top_down)
                 {
-                    coordinates[i].x = mostLeft;
                     coordinates.InsertRange(next, new OneCoordinate[] {
+                                    new OneCoordinate(mostLeft,coordinates[i].y),
                                     new OneCoordinate(mostLeft,mostTop)
                                 });
-<<<<<<< HEAD
-=======
                     if (next == 0)
                         coordinates.RemoveAt(coordinates.Count - 1);
                     else
                         coordinates.RemoveAt(i);
->>>>>>> somebranch
                     i += 1;
                 }
                 //@}
@@ -1226,67 +1185,55 @@ namespace WoodcatCalculator
             {
                 if (coordinates[next].y <= mostDown)
                 {
-                    coordinates[i].x = mostRight;
                     coordinates.InsertRange(next, new OneCoordinate[] {
+                                    new OneCoordinate(mostRight,coordinates[i].y),
                                     new OneCoordinate(mostRight,mostDown),
                                     new OneCoordinate(coordinates[i].x,mostDown)
                                 });
-<<<<<<< HEAD
-=======
                     if (next == 0)
                         coordinates.RemoveAt(coordinates.Count - 1);
                     else
                         coordinates.RemoveAt(i);
->>>>>>> somebranch
                     i += 2;
                 }
                 //@{
                 else if (coordinates[next].y<=down_top)
                 {
-                    coordinates[i].x = mostRight;
                     coordinates.InsertRange(next, new OneCoordinate[] {
+                                    new OneCoordinate(mostRight,coordinates[i].y),
                                     new OneCoordinate(mostRight,mostDown)
                                 });
-<<<<<<< HEAD
-=======
                     if (next == 0)
                         coordinates.RemoveAt(coordinates.Count - 1);
                     else
                         coordinates.RemoveAt(i);
->>>>>>> somebranch
                     i += 1;
                 }
                 //@}
                 else if (coordinates[next].y >= mostTop)
                 {
-                    coordinates[i].x = mostRight;
                     coordinates.InsertRange(next, new OneCoordinate[] {
+                                    new OneCoordinate(mostRight,coordinates[i].y),
                                     new OneCoordinate(mostRight,mostTop),
                                     new OneCoordinate(coordinates[i].x,mostTop)
                                 });
-<<<<<<< HEAD
-=======
                     if (next == 0)
                         coordinates.RemoveAt(coordinates.Count - 1);
                     else
                         coordinates.RemoveAt(i);
->>>>>>> somebranch
                     i += 2;
                 }
                 //@{
                 else if (coordinates[next].y>=top_down)
                 {
-                    coordinates[i].x = mostRight;
                     coordinates.InsertRange(next, new OneCoordinate[] {
+                                    new OneCoordinate(mostRight,coordinates[i].y),
                                     new OneCoordinate(mostRight,mostTop)
                                 });
-<<<<<<< HEAD
-=======
                     if (next == 0)
                         coordinates.RemoveAt(coordinates.Count - 1);
                     else
                         coordinates.RemoveAt(i);
->>>>>>> somebranch
                     i += 1;
                 }
                 //@}
