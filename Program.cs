@@ -54,7 +54,7 @@ namespace WoodcatCalculator
 
         }
         // static piece[]
-        static List<piece> pieses = new List<piece>(new piece[] { new piece(3, 3), new piece(3.7, 1), new piece(3.7, 1), new piece(3.7, 1), new piece(3.7, 1) });
+        static List<piece> pieses = new List<piece>(new piece[] { new piece(3, 3), new piece(3.5, 0.5), new piece(3.5, 0.5), new piece(3.5, 0.5), new piece(3.5, 0.5) });
 
         // static piece[] pieses = { new piece(5, 1), new piece(5, 1), new piece(5, 1), new piece(5, 1), new piece(5, 1) };
         static List<PieseAndLocation> pieseAndLocationS = new List<PieseAndLocation>();
@@ -809,7 +809,15 @@ namespace WoodcatCalculator
                     coordinates.InsertRange(next, new OneCoordinate[] {
                                     new OneCoordinate(mostLeft,mostDown),
                                     new OneCoordinate(mostLeft,coordinates[i].y)
+<<<<<<< HEAD
                                 });
+=======
+                                }); 
+                    if (next == 0)
+                        coordinates.RemoveAt(coordinates.Count - 1);
+                    else
+                        coordinates.RemoveAt(i);
+>>>>>>> somebranch
                     i += 2;
                 }
                 //@{
@@ -818,7 +826,14 @@ namespace WoodcatCalculator
                     coordinates[i].y = mostDown;
                     coordinates.InsertRange(next, new OneCoordinate[] {
                                     new OneCoordinate(mostLeft,mostDown)
+<<<<<<< HEAD
                                 });
+=======
+                                }); if (next == 0)
+                        coordinates.RemoveAt(coordinates.Count - 1);
+                    else
+                        coordinates.RemoveAt(i);
+>>>>>>> somebranch
                     i += 1;
                 }
                 //@}
@@ -828,7 +843,15 @@ namespace WoodcatCalculator
                     coordinates.InsertRange(next, new OneCoordinate[] {
                                     new OneCoordinate(mostRight,mostDown),
                                     new OneCoordinate(mostRight,coordinates[i].y)
+<<<<<<< HEAD
                                 });
+=======
+                                }); 
+                    if (next == 0)
+                        coordinates.RemoveAt(coordinates.Count - 1);
+                    else
+                        coordinates.RemoveAt(i);
+>>>>>>> somebranch
                     i += 2;
                 }
                 //@{
@@ -838,6 +861,13 @@ namespace WoodcatCalculator
                     coordinates.InsertRange(next, new OneCoordinate[] {
                                     new OneCoordinate(mostRight,mostDown)
                                 });
+<<<<<<< HEAD
+=======
+                    if (next == 0)
+                        coordinates.RemoveAt(coordinates.Count - 1);
+                    else
+                        coordinates.RemoveAt(i);
+>>>>>>> somebranch
                     i += 1;
                 }
                 //@}
@@ -920,7 +950,15 @@ namespace WoodcatCalculator
                     coordinates.InsertRange(next, new OneCoordinate[] {
                                     new OneCoordinate(mostLeft,mostTop),
                                     new OneCoordinate(mostLeft,coordinates[i].y)
+<<<<<<< HEAD
                                 });
+=======
+                                }); 
+                    if (next == 0)
+                        coordinates.RemoveAt(coordinates.Count - 1);
+                    else
+                        coordinates.RemoveAt(i);
+>>>>>>> somebranch
                     i += 2;
                 }
                 //@{
@@ -930,7 +968,15 @@ namespace WoodcatCalculator
                     coordinates.InsertRange(next, new OneCoordinate[] {
                                     new OneCoordinate(mostLeft,mostTop)
                                 });
+<<<<<<< HEAD
                     i += 1;
+=======
+
+                    if (next == 0)
+                        coordinates.RemoveAt(coordinates.Count - 1);
+                    else
+                        coordinates.RemoveAt(i); i += 1;
+>>>>>>> somebranch
                 }
                 //@}
                 else if (coordinates[next].x >= mostRight)
@@ -940,6 +986,13 @@ namespace WoodcatCalculator
                                     new OneCoordinate(mostRight,mostTop),
                                     new OneCoordinate(mostRight,coordinates[i].y)
                                 });
+<<<<<<< HEAD
+=======
+                    if (next == 0)
+                        coordinates.RemoveAt(coordinates.Count - 1);
+                    else
+                        coordinates.RemoveAt(i);
+>>>>>>> somebranch
                     i += 2;
                 }
                 //@{
@@ -949,6 +1002,13 @@ namespace WoodcatCalculator
                     coordinates.InsertRange(next, new OneCoordinate[] {
                                     new OneCoordinate(mostRight,mostTop)
                                 });
+<<<<<<< HEAD
+=======
+                    if (next == 0)
+                        coordinates.RemoveAt(coordinates.Count - 1);
+                    else
+                        coordinates.RemoveAt(i);
+>>>>>>> somebranch
                     i += 1;
                 }
                 //@}
@@ -1032,6 +1092,13 @@ namespace WoodcatCalculator
                                     new OneCoordinate(mostLeft,mostDown),
                                     new OneCoordinate(coordinates[i].x,mostDown)
                                 });
+<<<<<<< HEAD
+=======
+                    if (next == 0)
+                        coordinates.RemoveAt(coordinates.Count - 1);
+                    else
+                        coordinates.RemoveAt(i);
+>>>>>>> somebranch
                     i += 2;
                 }
                 //@{
@@ -1041,6 +1108,13 @@ namespace WoodcatCalculator
                     coordinates.InsertRange(next, new OneCoordinate[] {
                                     new OneCoordinate(mostLeft,mostDown)
                                 });
+<<<<<<< HEAD
+=======
+                    if (next == 0)
+                        coordinates.RemoveAt(coordinates.Count - 1);
+                    else
+                        coordinates.RemoveAt(i);
+>>>>>>> somebranch
                     i += 1;
                 }
                 //@}
@@ -1051,6 +1125,13 @@ namespace WoodcatCalculator
                                     new OneCoordinate(mostLeft,mostTop),
                                     new OneCoordinate(coordinates[i].x,mostTop)
                                 });
+<<<<<<< HEAD
+=======
+                    if (next == 0)
+                        coordinates.RemoveAt(coordinates.Count - 1);
+                    else
+                        coordinates.RemoveAt(i);
+>>>>>>> somebranch
                     i += 2;
                 }
                 //@{
@@ -1060,6 +1141,13 @@ namespace WoodcatCalculator
                     coordinates.InsertRange(next, new OneCoordinate[] {
                                     new OneCoordinate(mostLeft,mostTop)
                                 });
+<<<<<<< HEAD
+=======
+                    if (next == 0)
+                        coordinates.RemoveAt(coordinates.Count - 1);
+                    else
+                        coordinates.RemoveAt(i);
+>>>>>>> somebranch
                     i += 1;
                 }
                 //@}
@@ -1143,6 +1231,13 @@ namespace WoodcatCalculator
                                     new OneCoordinate(mostRight,mostDown),
                                     new OneCoordinate(coordinates[i].x,mostDown)
                                 });
+<<<<<<< HEAD
+=======
+                    if (next == 0)
+                        coordinates.RemoveAt(coordinates.Count - 1);
+                    else
+                        coordinates.RemoveAt(i);
+>>>>>>> somebranch
                     i += 2;
                 }
                 //@{
@@ -1152,6 +1247,13 @@ namespace WoodcatCalculator
                     coordinates.InsertRange(next, new OneCoordinate[] {
                                     new OneCoordinate(mostRight,mostDown)
                                 });
+<<<<<<< HEAD
+=======
+                    if (next == 0)
+                        coordinates.RemoveAt(coordinates.Count - 1);
+                    else
+                        coordinates.RemoveAt(i);
+>>>>>>> somebranch
                     i += 1;
                 }
                 //@}
@@ -1162,6 +1264,13 @@ namespace WoodcatCalculator
                                     new OneCoordinate(mostRight,mostTop),
                                     new OneCoordinate(coordinates[i].x,mostTop)
                                 });
+<<<<<<< HEAD
+=======
+                    if (next == 0)
+                        coordinates.RemoveAt(coordinates.Count - 1);
+                    else
+                        coordinates.RemoveAt(i);
+>>>>>>> somebranch
                     i += 2;
                 }
                 //@{
@@ -1171,6 +1280,13 @@ namespace WoodcatCalculator
                     coordinates.InsertRange(next, new OneCoordinate[] {
                                     new OneCoordinate(mostRight,mostTop)
                                 });
+<<<<<<< HEAD
+=======
+                    if (next == 0)
+                        coordinates.RemoveAt(coordinates.Count - 1);
+                    else
+                        coordinates.RemoveAt(i);
+>>>>>>> somebranch
                     i += 1;
                 }
                 //@}
