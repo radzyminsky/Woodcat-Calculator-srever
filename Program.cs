@@ -770,9 +770,10 @@ namespace WoodcatCalculator
                 {
                     coordinates.InsertRange(next, new OneCoordinate[] {
                                     new OneCoordinate(mostLeft,coordinates[i].y),
-                                    new OneCoordinate(mostLeft,mostDown)
+                                    new OneCoordinate(mostLeft,mostDown),
+                                    new OneCoordinate(coordinates[next].x,mostDown)
                                 });
-                    i += 2;
+                    i += 3;
                 }
             }
             else if (coordinates[i].x >= mostRight)
@@ -802,9 +803,10 @@ namespace WoodcatCalculator
                 {
                     coordinates.InsertRange(next, new OneCoordinate[] {
                                     new OneCoordinate(mostRight,coordinates[i].y),
-                                    new OneCoordinate(mostRight,mostDown)
+                                    new OneCoordinate(mostRight,mostDown),
+                                    new OneCoordinate(coordinates[next].x,mostDown)
                                 });
-                    i += 2;
+                    i += 3;
                 }
             }
             else
@@ -901,9 +903,10 @@ namespace WoodcatCalculator
                 {
                     coordinates.InsertRange(next, new OneCoordinate[] {
                                     new OneCoordinate(mostLeft,coordinates[i].y),
-                                    new OneCoordinate(mostLeft,mostTop)
+                                    new OneCoordinate(mostLeft,mostTop),
+                                    new OneCoordinate(coordinates[next].x,mostTop)
                                 });
-                    i += 2;
+                    i += 3;
                 }
             }
             else if (coordinates[i].x >= mostRight)
@@ -933,9 +936,10 @@ namespace WoodcatCalculator
                 {
                     coordinates.InsertRange(next, new OneCoordinate[] {
                                     new OneCoordinate(mostRight,coordinates[i].y),
-                                    new OneCoordinate(mostRight,mostTop)
+                                    new OneCoordinate(mostRight,mostTop),
+                                    new OneCoordinate(coordinates[next].x,mostTop)
                                 });
-                    i += 2;
+                    i += 3;
                 }
             }
             else
@@ -1032,9 +1036,10 @@ namespace WoodcatCalculator
                 {
                     coordinates.InsertRange(next, new OneCoordinate[] {
                                     new OneCoordinate(coordinates[i].x,mostDown),
-                                    new OneCoordinate(mostLeft,mostDown)
+                                    new OneCoordinate(mostLeft,mostDown),
+                                    new OneCoordinate(mostLeft,coordinates[next].y)
                                 });
-                    i += 2;
+                    i += 3;
                 }
             }
             else if (coordinates[i].y >= mostTop)
@@ -1064,9 +1069,10 @@ namespace WoodcatCalculator
                 {
                     coordinates.InsertRange(next, new OneCoordinate[] {
                                     new OneCoordinate(coordinates[i].x,mostTop),
-                                    new OneCoordinate(mostLeft,mostTop)
+                                    new OneCoordinate(mostLeft,mostTop),
+                                    new OneCoordinate(mostLeft,coordinates[next].y)
                                 });
-                    i += 2;
+                    i += 3;
                 }
             }
             else
@@ -1163,9 +1169,10 @@ namespace WoodcatCalculator
                 {
                     coordinates.InsertRange(next, new OneCoordinate[] {
                                     new OneCoordinate(coordinates[i].x,mostDown),
-                                    new OneCoordinate(mostRight,mostDown)
+                                    new OneCoordinate(mostRight,mostDown),
+                                    new OneCoordinate(mostRight,coordinates[next].y)
                                 });
-                    i += 2;
+                    i += 3;
                 }
             }
             else if (coordinates[i].y >= mostTop)
@@ -1195,9 +1202,10 @@ namespace WoodcatCalculator
                 {
                     coordinates.InsertRange(next, new OneCoordinate[] {
                                     new OneCoordinate(coordinates[i].x,mostTop),
-                                    new OneCoordinate(mostRight,mostTop)
+                                    new OneCoordinate(mostRight,mostTop),
+                                    new OneCoordinate(mostRight,coordinates[next].y)
                                 });
-                    i += 2;
+                    i += 3;
                 }
             }
             else
