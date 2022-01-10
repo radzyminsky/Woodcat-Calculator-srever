@@ -144,8 +144,8 @@ namespace WoodcatCalculator
     }
     class PieseAndLocation
     {
-        public double x;
-        public double y;
+        public double x_left;
+        public double y_down;
         public bool isVertical;
         public piece p;
         public PieseAndLocation()
@@ -154,15 +154,37 @@ namespace WoodcatCalculator
         }
         public PieseAndLocation(OneCoordinate oc, piece p_)
         {
-            x = oc.x;
-            y = oc.y;
             isVertical = p_.Length >= p_.Width;
             p = p_;
+            init_x_left_y_down(oc);
         }
-
+        void init_x_left_y_down(OneCoordinate oc)
+        {
+            switch (oc.type)
+            {
+                case types.top:
+                    x_left = oc.x - p.Width;
+                    y_down = oc.y;
+                    break;
+                case types.down:
+                    x_left = oc.x;
+                    y_down = oc.y - p.Length;
+                    break;
+                case types.right:
+                    x_left = oc.x;
+                    y_down = oc.y;
+                    break;
+                case types.left:
+                    x_left = oc.x - p.Width;
+                    y_down = oc.y - p.Length;
+                    break;
+                default:
+                    throw new Exception();
+            }
+        }
         public override string ToString()
         {
-            return string.Format("in coordinate ({0},{1}), put piese {2} [vartical?, {3}]", x, y, p, isVertical);
+            return string.Format("in coordinate ({0},{1}), put piese {2} [vartical?, {3}]", x_left, y_down, p, isVertical);
         }
     }
     class Option : IComparable<Option>
