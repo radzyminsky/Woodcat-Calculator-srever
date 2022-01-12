@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace WoodcatCalculator
@@ -14,44 +16,25 @@ namespace WoodcatCalculator
     class Program
     {
         public static double thicknessOfBlade = 0.5;
+        static Coordinates C;
+        static List<piece> pieses=new List<piece>();
+        static List<PieseAndLocation> pieseAndLocationS = new List<PieseAndLocation>();
 
+        static HttpListener httpListener = new HttpListener();
         static void Main(string[] args)
         {
+            HttpListenerPrefixCollection prefixes = httpListener.Prefixes;
+            prefixes.Add("http://localhost:12345/WoodcatCalculator/");
+            httpListener.Start();
+            Thread tr = new Thread(responseThred);
+            tr.Start();
+
             //------------------------------
             DateTime start = DateTime.Now;
             //-----------------------------------
-            Coordinates C = new Coordinates(
-                new OneCoordinate[]
-                {
-                    //new OneCoordinate(0, 4),
-                    //new OneCoordinate(2, 4),
-                    //new OneCoordinate(2, 0),
-                    //new OneCoordinate(5, 0),
-                    //new OneCoordinate(5, 5),
-                    //new OneCoordinate(0, 5)
-                new OneCoordinate(0, 0),
-                new OneCoordinate(5, 0),
-                new OneCoordinate(5, 5),
-                new OneCoordinate(0, 5)
-
-                });
-            Console.WriteLine(C);
 
 
-
-            List<Coordinates> ll = new List<Coordinates>();
-            ll.Add(new Coordinates(C));
-            pieses.Sort();
-            foreach (piece item in pieses)
-            {
-                Console.WriteLine(item);
-            }
-            Check(ll, 0);
-
-            for (int i = pieseAndLocationS.Count - 1; i > -1; i--)
-            {
-                Console.WriteLine(pieseAndLocationS[i]);
-            }
+          
             //------------------------------
             DateTime end = DateTime.Now;
             Console.WriteLine("\n\n\n");
@@ -59,11 +42,103 @@ namespace WoodcatCalculator
             //-----------------------------------
 
         }
+        static void responseThred()
+        {
+            while (true)
+            {
+                HttpListenerContext context;
+                context = httpListener.GetContext();
+
+                HttpListenerRequest req;
+                HttpListenerResponse res;
+                req = context.Request;
+                res = context.Response;
+
+                byte[] reqArray = new byte[req.ContentLength64];
+                
+
+                req.InputStream.Read(reqArray, 0, reqArray.Length);
+
+                string str = Encoding.ASCII.GetString(reqArray);
+                string[] strArray = str.Split(new char[] { ';', '\r', '\n' },StringSplitOptions.RemoveEmptyEntries);
+                string[][] str2D = new string[strArray.Length][];
+
+                for (int i = 0; i < strArray.Length; i++)
+                {
+                    Console.WriteLine(strArray[i]);
+                    str2D[i] = strArray[i].Split(':');
+                }
+                for (int i = 0; i < str2D.Length; i++)
+                {
+                    Console.WriteLine(str2D[i][0]);
+                    Console.WriteLine(str2D[i][1]);
+                    switch (str2D[i][0])
+                    {
+                        case "plates":
+                            initPlates(str2D[i][1].Split('+'));
+                            break;
+
+                        case "cuts":
+                            initPieses(str2D[i][1].Split('+'));
+                            break;
+
+                        case "blade":
+                            initThicknessOfBlade(str2D[i][1]);
+                            break;
+
+                        default:
+                            throw new Exception("the input ERROR in iterate: "+i+1);
+                    }
+                }
+                List<Coordinates> ll = new List<Coordinates>();
+                ll.Add(new Coordinates(C));
+                pieses.Sort();
+                foreach (piece item in pieses)
+                {
+                    Console.WriteLine(item);
+                }
+                Check(ll, 0);
+
+                string response="{\n";
+                for (int i = pieseAndLocationS.Count -1; i > 0; i--)
+                {
+                   response+= pieseAndLocationS[i]+",\n";
+                }
+                response += pieseAndLocationS[0] + "\n}";
+                Console.WriteLine(response);
+                byte[] resArray = new byte[response.Length];
+                res.OutputStream.Write(resArray, 0, resArray.Length);
+                res.Close();
+            }
+        }
+        static void initPlates(string[] str)
+        {
+            onePlate p = new onePlate(str[0]);
+            C = new Coordinates(p.plate);
+        }
+        static void initPieses(string[] str) 
+        {
+            foreach (var item in str)
+            {
+                pieses.Add(new piece(item));
+            }      
+        }
+        static void initThicknessOfBlade(string str) {
+            try
+            {
+                thicknessOfBlade = double.Parse(str);
+            }
+            catch
+            {
+                throw new Exception("the blade input is ERROR");
+            }
+        }
+
+
         // static piece[]
-        static List<piece> pieses = new List<piece>(new piece[] { new piece(3, 3), new piece(3.5, 0.5), new piece(3.5, 0.5), new piece(3.5, 0.5), new piece(3.5, 0.5) });
+
 
         // static piece[] pieses = { new piece(5, 1), new piece(5, 1), new piece(5, 1), new piece(5, 1), new piece(5, 1) };
-        static List<PieseAndLocation> pieseAndLocationS = new List<PieseAndLocation>();
 
 
         ////---------------------------------------
@@ -113,7 +188,7 @@ namespace WoodcatCalculator
             }
         }
 
-        //this function gets 'List<Coordinates>' and 'piece',
+        //this function gets 'List<Coordinates>' and one 'piece',
         //then return 'List<Option>'for catting the piese was given,
         //that contains the all options, and sorts them order best to worst,
         //(the best option is it that has min "cordinates[]" and for each  (cordinates[]) it has min coordinates)
@@ -184,7 +259,7 @@ namespace WoodcatCalculator
         }
         public override string ToString()
         {
-            return string.Format("in coordinate ({0},{1}), put piese {2} [vartical?, {3}]", x_left, y_down, p, isVertical);
+            return string.Format("\"in_coordinate_({0},{1})\":\"_put piese_{2}_[vartical?,_{3}]\"", x_left, y_down, p, isVertical);
         }
     }
     class Option : IComparable<Option>
@@ -304,8 +379,8 @@ namespace WoodcatCalculator
     {
         public List<OneCoordinate> coordinates;
 
-      //  private double x_right, x_left, y_top, y_down;
-       // private double mostTop, mostLeft, mostRight, top_down, down_top, mostDown, right_left, left_right;
+        //  private double x_right, x_left, y_top, y_down;
+        // private double mostTop, mostLeft, mostRight, top_down, down_top, mostDown, right_left, left_right;
 
         public Coordinates()
         {
@@ -745,7 +820,7 @@ namespace WoodcatCalculator
                 if (coordinates[i].type == types.right || coordinates[i].type == types.left)
                 {
                     if (coordinates[i].y <= down_top && coordinates[i].y > mostDown)
-                        i = helpSawdustCalculateDown(mostRight,right_left,mostLeft,left_right,mostTop,top_down,mostDown,down_top, i, next.get());
+                        i = helpSawdustCalculateDown(mostRight, right_left, mostLeft, left_right, mostTop, top_down, mostDown, down_top, i, next.get());
                     else if (coordinates[i].y < mostTop && coordinates[i].y >= top_down)
                         i = helpSawdustCalculateTop(mostRight, right_left, mostLeft, left_right, mostTop, top_down, mostDown, down_top, i, next.get());
                 }
@@ -787,7 +862,7 @@ namespace WoodcatCalculator
                                 });
                     i += 3;
                 }
-                
+
                 else if (coordinates[next].x > left_right)
                 {
                     coordinates.InsertRange(next, new OneCoordinate[] {
@@ -821,7 +896,7 @@ namespace WoodcatCalculator
                     i += 4;
                 }
                 //@{
-                else if (coordinates[next].x<=left_right)
+                else if (coordinates[next].x <= left_right)
                 {
                     coordinates.InsertRange(next, new OneCoordinate[] {
                                     new OneCoordinate(mostRight,coordinates[i].y),
@@ -830,7 +905,7 @@ namespace WoodcatCalculator
                                 });
                     i += 3;
                 }
-                
+
                 else if (coordinates[next].x < right_left)
                 {
                     coordinates.InsertRange(next, new OneCoordinate[] {
@@ -931,7 +1006,7 @@ namespace WoodcatCalculator
                     i += 4;
                 }
                 //@{
-                else if (coordinates[next].x>=right_left) 
+                else if (coordinates[next].x >= right_left)
                 {
                     coordinates.InsertRange(next, new OneCoordinate[] {
                                     new OneCoordinate(mostLeft,coordinates[i].y),
@@ -940,7 +1015,7 @@ namespace WoodcatCalculator
                                 });
                     i += 3;
                 }
-                
+
                 else if (coordinates[next].x > left_right)
                 {
                     coordinates.InsertRange(next, new OneCoordinate[] {
@@ -1082,7 +1157,7 @@ namespace WoodcatCalculator
                     i += 4;// new MyIndex(i + 4, coordinates.Count).get();
                 }
                 //@{
-                else if (coordinates[next].y>=top_down)
+                else if (coordinates[next].y >= top_down)
                 {
                     coordinates.InsertRange(next, new OneCoordinate[] {
                                     new OneCoordinate(coordinates[i].x,mostDown),
@@ -1123,7 +1198,7 @@ namespace WoodcatCalculator
                     i += 4;
                 }
                 //@{
-                else if (coordinates[next].y<=down_top)
+                else if (coordinates[next].y <= down_top)
                 {
                     coordinates.InsertRange(next, new OneCoordinate[] {
                                     new OneCoordinate(coordinates[i].x,mostTop),
@@ -1231,7 +1306,7 @@ namespace WoodcatCalculator
                     i += 4;// new MyIndex(i + 4, coordinates.Count).get();
                 }
                 //@{
-                else if (coordinates[next].y>=top_down)
+                else if (coordinates[next].y >= top_down)
                 {
                     coordinates.InsertRange(next, new OneCoordinate[] {
                                     new OneCoordinate(coordinates[i].x,mostDown),
@@ -1272,7 +1347,7 @@ namespace WoodcatCalculator
                     i += 4;
                 }
                 //@{
-                else if (coordinates[next].y<=down_top)
+                else if (coordinates[next].y <= down_top)
                 {
                     coordinates.InsertRange(next, new OneCoordinate[] {
                                     new OneCoordinate(coordinates[i].x,mostTop),
@@ -1366,7 +1441,51 @@ namespace WoodcatCalculator
             return i;
         }
     }
+    class onePlate
+    {
+        public OneCoordinate[] plate = new OneCoordinate[4];
 
+        public onePlate(double length, double width)
+        {
+            if (width > length)
+            {
+                length += width;
+                width = length - width;
+                length -= width;
+            }
+
+            plate[0] = new OneCoordinate(0, 0);
+            plate[1] = new OneCoordinate(length, 0);
+            plate[2] = new OneCoordinate(length, width);
+            plate[3] = new OneCoordinate(0, width);
+        }
+        public onePlate(string str)
+        {
+            string[] str_arr = str.Split(new char[] { '(', ',', ')' }, StringSplitOptions.RemoveEmptyEntries);
+            double length, width;
+            try
+            {
+                width = double.Parse(str_arr[0]);
+                length = double.Parse(str_arr[1]);
+            }
+            catch
+            {
+                throw new Exception("the plate input is ERROR");
+            }
+            if (width > length)
+            {
+                length += width;
+                width = length - width;
+                length -= width;
+            }
+
+            plate[0] = new OneCoordinate(0, 0);
+            plate[1] = new OneCoordinate(length, 0);
+            plate[2] = new OneCoordinate(length, width);
+            plate[3] = new OneCoordinate(0, width);
+
+        }
+    }
     class piece : IComparable<piece>
     {
         public double Length;
@@ -1384,6 +1503,31 @@ namespace WoodcatCalculator
                 Length = length;
                 Width = width;
             }
+        }
+        public piece(string str)
+        {
+            string[] str_arr = str.Split(new char[] { '(', ',', ')' }, StringSplitOptions.RemoveEmptyEntries);
+            double length, width;
+            try
+            {
+                width = double.Parse(str_arr[0]);
+                length = double.Parse(str_arr[1]);
+            }
+            catch
+            {
+                throw new Exception("the piece input is ERROR");
+            }
+            if (width > length)
+            {
+                Length = width;
+                Width = length;
+            }
+            else
+            {
+                Length = length;
+                Width = width;
+            }
+
         }
         public piece(piece p)
         {
