@@ -17,8 +17,8 @@ namespace WoodcatCalculator
     {
         public static double thicknessOfBlade = 0.5;
         static Coordinates C;
-        static List<piece> pieses=new List<piece>();
-        static List<PieseAndLocation> pieseAndLocationS = new List<PieseAndLocation>();
+        static List<piece> pieses;
+        static List<PieseAndLocation> pieseAndLocationS;
 
         static HttpListener httpListener = new HttpListener();
         static void Main(string[] args)
@@ -26,28 +26,24 @@ namespace WoodcatCalculator
             HttpListenerPrefixCollection prefixes = httpListener.Prefixes;
             prefixes.Add("http://localhost:12345/WoodcatCalculator/");
             httpListener.Start();
-            Thread tr = new Thread(responseThred);
-            tr.Start();
+           
 
-            //------------------------------
-            DateTime start = DateTime.Now;
-            //-----------------------------------
 
 
           
-            //------------------------------
-            DateTime end = DateTime.Now;
-            Console.WriteLine("\n\n\n");
-            Console.WriteLine(end - start);
-            //-----------------------------------
-
-        }
-        static void responseThred()
-        {
+        
             while (true)
             {
+                pieses = new List<piece>();
+                pieseAndLocationS = new List<PieseAndLocation>();
+
                 HttpListenerContext context;
                 context = httpListener.GetContext();
+
+
+                //------------------------------
+                DateTime start = DateTime.Now;
+                //-----------------------------------
 
                 HttpListenerRequest req;
                 HttpListenerResponse res;
@@ -55,7 +51,12 @@ namespace WoodcatCalculator
                 res = context.Response;
 
                 byte[] reqArray = new byte[req.ContentLength64];
-                
+
+                //the request must look like this:
+                //
+                //          plates: (5, 5);
+                //          cuts: (4, 1) + (4, 1) + (1, 4) + (1, 4) + (3, 3);
+                //          blade: 0
 
                 req.InputStream.Read(reqArray, 0, reqArray.Length);
 
@@ -106,9 +107,19 @@ namespace WoodcatCalculator
                 }
                 response += pieseAndLocationS[0] + "\n}";
                 Console.WriteLine(response);
-                byte[] resArray = new byte[response.Length];
+                byte[] resArray = Encoding.ASCII.GetBytes(response);
+                res.ContentType = "json";
+
                 res.OutputStream.Write(resArray, 0, resArray.Length);
+
                 res.Close();
+
+                //------------------------------
+                DateTime end = DateTime.Now;
+                Console.WriteLine("\n\n\n");
+                Console.WriteLine(end - start);
+                //-----------------------------------
+
             }
         }
         static void initPlates(string[] str)
