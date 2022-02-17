@@ -20,18 +20,19 @@ namespace WoodcatCalculator
         static List<piece> pieses;
         static List<PieseAndLocation> pieseAndLocationS;
 
+
         static HttpListener httpListener = new HttpListener();
         static void Main(string[] args)
         {
             HttpListenerPrefixCollection prefixes = httpListener.Prefixes;
             prefixes.Add("http://localhost:12345/WoodcatCalculator/");
             httpListener.Start();
-           
 
 
 
-          
-        
+
+
+
             while (true)
             {
                 pieses = new List<piece>();
@@ -49,7 +50,7 @@ namespace WoodcatCalculator
                 HttpListenerResponse res;
                 req = context.Request;
                 res = context.Response;
-
+                res.AddHeader("Access-Control-Allow-Origin", " *");
                 byte[] reqArray = new byte[req.ContentLength64];
 
                 //the request must look like this:
@@ -61,7 +62,7 @@ namespace WoodcatCalculator
                 req.InputStream.Read(reqArray, 0, reqArray.Length);
 
                 string str = Encoding.ASCII.GetString(reqArray);
-                string[] strArray = str.Split(new char[] { ';', '\r', '\n' },StringSplitOptions.RemoveEmptyEntries);
+                string[] strArray = str.Split(new char[] { ';', '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
                 string[][] str2D = new string[strArray.Length][];
 
                 for (int i = 0; i < strArray.Length; i++)
@@ -88,7 +89,7 @@ namespace WoodcatCalculator
                             break;
 
                         default:
-                            throw new Exception("the input ERROR in iterate: "+i+1);
+                            throw new Exception("the input ERROR in iterate: " + i + 1);
                     }
                 }
                 List<Coordinates> ll = new List<Coordinates>();
@@ -98,14 +99,17 @@ namespace WoodcatCalculator
                 {
                     Console.WriteLine(item);
                 }
-                Check(ll, 0);
+                Check3(ll, 0, new List<PieseAndLocation>());
 
-                string response="{\n";
-                for (int i = pieseAndLocationS.Count -1; i > 0; i--)
+                string response = "[\n";
+                for (int i = pieseAndLocationS.Count - 1; i > 0; i--)
                 {
-                   response+= pieseAndLocationS[i]+",\n";
+                    response += pieseAndLocationS[i] + ",\n";
                 }
-                response += pieseAndLocationS[0] + "\n}";
+                if (pieseAndLocationS.Count > 0)
+                    response += pieseAndLocationS[0] + "\n]";
+                else
+                    response = "can't insert all cuts!";
                 Console.WriteLine(response);
                 byte[] resArray = Encoding.ASCII.GetBytes(response);
                 res.ContentType = "json";
@@ -127,14 +131,15 @@ namespace WoodcatCalculator
             onePlate p = new onePlate(str[0]);
             C = new Coordinates(p.plate);
         }
-        static void initPieses(string[] str) 
+        static void initPieses(string[] str)
         {
             foreach (var item in str)
             {
                 pieses.Add(new piece(item));
-            }      
+            }
         }
-        static void initThicknessOfBlade(string str) {
+        static void initThicknessOfBlade(string str)
+        {
             try
             {
                 thicknessOfBlade = double.Parse(str);
@@ -144,38 +149,6 @@ namespace WoodcatCalculator
                 throw new Exception("the blade input is ERROR");
             }
         }
-
-
-        // static piece[]
-
-
-        // static piece[] pieses = { new piece(5, 1), new piece(5, 1), new piece(5, 1), new piece(5, 1), new piece(5, 1) };
-
-
-        ////---------------------------------------
-        //static void Check1(List<Coordinates> coordList, int indexOfPieses)
-        //{
-        //    List<Option> options = createOptionsList(coordList, pieses1[indexOfPieses]);
-
-        //    for (int i = 0; i < options.Count; i++)
-        //    {
-        //        if (indexOfPieses == pieses1.Length - 1)//that is we complete cut all pieses, so we finished to caculate
-        //        {
-        //            pieseAndLocationS.Add(options[0].piese_loocation);
-        //            return;
-        //        }
-
-        //        //requrse call
-        //        Check1(options[i].listCoordinates, indexOfPieses + 1);
-        //        if (pieseAndLocationS.Count > 0)
-        //        {
-        //            pieseAndLocationS.Add(options[i].piese_loocation);
-        //            return;
-        //        }
-        //    }
-        //}
-        ////------------------------------------
-
 
         static void Check(List<Coordinates> coordList, int indexOfPieses)
         {
@@ -198,6 +171,119 @@ namespace WoodcatCalculator
                 }
             }
         }
+
+        //אני חיב לסיים את הפונ' הזו מחר עד 12 בצהריים, ולהתקדם הלאה עם המשימות!! בהצלחה
+        //הפונ' לא עובדת טוב, אני אמור ליצור pieseAndLocationS2 עבור כל איטרציה של ריקורסיה וכל pieseAndLocationS2
+        //כזה, יכלול בעצם את כל הערכים של pieseAndLocationS2 שקדם לו, ורק כאשר יסתיימו החתיכות אז הpieseAndLocationS יכיל את 
+        //הpieseAndLocationS2   האחרון שהוא הכי עדכני
+        //ובמידה ובאחת מאיטרציות הרקורסיה, מערך ה options ריק, אז צריך להתקדם לאיטרציה הבאה עם pieseAndLocationS2 הקודם.
+        //כמובן שלפי זה יוצא שהפונקציה צריכה לקבל משתנה של pieseAndLocationS2 וכך בכל קריאה רקורסיבית, 
+        //הפונקציה תקבל כפרמטר את הpieseAndLocationS2 שלה והיא בעצמה תיצור אחד חדש כזה 
+        //ואז תעתיק את כל התאים של ה pieseAndLocationS2 שהתקבל כפרמטר, אל תוך המערך החדש שזה עתה היא יצרה
+        static void Check2(List<Coordinates> listCoordinates, int indexOfPieses, List<PieseAndLocation> locationsPrevius)
+        {
+            List<PieseAndLocation> locationsCurrent;
+            List<Option> options = createOptionsList(listCoordinates, pieses[indexOfPieses]);
+            int i = 0;
+            do
+            {
+                if (indexOfPieses == pieses.Count - 1)//that is we complete cut all pieses, so we finished to caculate
+                {
+                    locationsCurrent = new List<PieseAndLocation>(locationsPrevius);
+                    if (options.Count > 0)
+                        locationsCurrent.Add(options[0].piese_loocation);
+
+                    if (pieseAndLocationS.Count < locationsCurrent.Count)
+                    {
+                        pieseAndLocationS.RemoveRange(0, pieseAndLocationS.Count);
+                        pieseAndLocationS.InsertRange(0, locationsCurrent);
+                    }
+                    return;
+                }
+                if (options.Count > 0)
+                {
+                    locationsCurrent = new List<PieseAndLocation>(locationsPrevius);
+                    locationsCurrent.Add(options[i].piese_loocation);
+                    Check2(options[i].listCoordinates, indexOfPieses + 1, locationsCurrent);
+                }
+                else
+                    Check2(listCoordinates, indexOfPieses + 1, locationsPrevius);
+                if (pieseAndLocationS.Count == pieses.Count)
+                    return;
+                i++;
+            } while (i < options.Count);
+        }
+        static void Check3(List<Coordinates> listCoordinates, int indexOfPieses, List<PieseAndLocation> locationsPrevius)
+        {
+            List<PieseAndLocation> locationsCurrent;
+            List<Option> options = createOptionsList(listCoordinates, pieses[indexOfPieses]);
+
+            if (indexOfPieses == pieses.Count - 1)//that is we complete cut all pieses, so we finished to caculate
+            {
+              
+                locationsCurrent = new List<PieseAndLocation>(locationsPrevius);
+                if (options.Count > 0)
+                    locationsCurrent.Add(options[0].piese_loocation);
+
+                if (pieseAndLocationS.Count < locationsCurrent.Count)
+                {
+                    pieseAndLocationS.RemoveRange(0, pieseAndLocationS.Count);
+                    pieseAndLocationS.InsertRange(0, locationsCurrent);
+                }
+              
+                return;
+            }
+            for (int i = 0; i < options.Count; i++)
+            {
+                locationsCurrent = new List<PieseAndLocation>(locationsPrevius);
+                locationsCurrent.Add(options[i].piese_loocation);
+                Check3(options[i].listCoordinates, indexOfPieses + 1, locationsCurrent);
+                if (pieseAndLocationS.Count == pieses.Count)
+                    return;
+            }
+            if (options.Count == 0)
+                Check3(listCoordinates, indexOfPieses + 1, locationsPrevius);
+        }
+
+        static endNode pointToEndNode;
+        static node check4(List<Coordinates> listCoordinates)
+        {
+            pointToEndNode = new endNode(null, listCoordinates, -1);
+            node nod = check4(listCoordinates, 0);
+            while (pointToEndNode.index < pieses.Count - 1)
+               pointToEndNode.pointToEnd.next= check4(pointToEndNode.coordinatesList, pointToEndNode.index+1);
+            return nod;
+        }
+        static node check4(List<Coordinates> listCoordinates, int indexOfPieses)
+        {
+            if (indexOfPieses == pieses.Count)
+                return null;
+
+            node  temp= new node();
+            node nod = new node();
+            List<Option> options = createOptionsList(listCoordinates, pieses[indexOfPieses]);
+
+            for (int i = 0; i < options.Count; i++)
+            {
+                temp.value = options[i].piese_loocation;                
+                temp.next = check4(options[i].listCoordinates, indexOfPieses + 1);
+                if (temp.next != null)
+                    temp.offstring = temp.next.offstring + 1;
+                else
+                    temp.offstring = 0;
+
+                if (nod.offstring < temp.offstring)                
+                    nod = new node(temp);
+
+                if (pointToEndNode.index < indexOfPieses)
+                    pointToEndNode.set(nod, options[i].listCoordinates, indexOfPieses);
+
+                if (pointToEndNode.index==pieses.Count-1)                
+                    return nod;          
+            }
+            return null;
+        }
+
 
         //this function gets 'List<Coordinates>' and one 'piece',
         //then return 'List<Option>'for catting the piese was given,
@@ -222,10 +308,45 @@ namespace WoodcatCalculator
                             options.Add(option);
                         }
                     }
+                    if (coordinatesList[i].count() == 4)
+                        break;
                 }
             }
             options.Sort();
             return options;
+        }
+    }
+    class endNode
+    {
+        public node pointToEnd;
+        public List<Coordinates> coordinatesList;
+        public int index;
+        public endNode(node n, List<Coordinates> l, int i)
+        {
+            pointToEnd = n;
+            coordinatesList = l;
+            index = i;
+        }
+        public void set(node n, List<Coordinates> l,int i)
+        {
+            pointToEnd = n;
+            coordinatesList = l;
+            index = i;
+        }
+    }
+
+    class node
+    {
+        public node next=null;
+        public int offstring = -1;
+        public bool arrivedToEnd = false;
+        public PieseAndLocation value = null;
+        public node(){}
+        public node(node n)
+        {
+            next = n.next;
+            offstring = n.offstring;
+            arrivedToEnd = n.arrivedToEnd;
         }
     }
     class PieseAndLocation
@@ -270,7 +391,7 @@ namespace WoodcatCalculator
         }
         public override string ToString()
         {
-            return string.Format("\"in_coordinate_({0},{1})\":\"_put piese_{2}_[vartical?,_{3}]\"", x_left, y_down, p, isVertical);
+            return string.Format("{3}\"in_coordinate\":{3}\"left\":\"{0}\",\"bottom\":\"{1}\"{4},\"put_piese\":{2}{4}", x_left, y_down, p, "{", "}");
         }
     }
     class Option : IComparable<Option>
@@ -1555,7 +1676,9 @@ namespace WoodcatCalculator
 
         public override string ToString()
         {
-            return "(" + Length + " x " + Width + ")";
+            string str = string.Format("{2}\"hight\":\"{0}\",\"width\":\"{1}\"{3}", Length, Width, "{", "}");
+            return str;
+            //  return "(" + Length + " x " + Width + ")";
         }
         public int CompareTo(piece other)
         {
